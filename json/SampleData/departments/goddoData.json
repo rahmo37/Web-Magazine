@@ -1,0 +1,89 @@
+[
+  {
+    "subcategoryID": "god_sub_72ccb6c8812e",
+    "subcategoryName": "probondho_প্রবন্ধ",
+    "content": [
+      {
+        "metadata": {
+          "godID": "god_34ca6f8a9555",
+          "contentAddedDate": "2025-01-10T08:30:00.000Z",
+          "originalWritingDate": "2025-01-09T00:00:00.000Z"
+        },
+        "article": {
+          "articleCover": "images/alQuranCover.jpg",
+          "articleName": "পবিত্র আল-কুরআনের আলো",
+          "articleTrailer": "videos/alQuranTrailer.mp4",
+          "aboutArticle": "পবিত্র আল-কুরআন মানবজাতির মুক্তির দিশারি হিসেবে বিবেচিত। এর ব্যাখ্যা ও শিক্ষামূলক দিকগুলো নিয়ে এখানে বিশদ আলোচনা করা হয়েছে।",
+          "mainContent": [
+            {
+              "sectionID": "sec_257ea1a4e27e",
+              "sectionAddedDate": "2025-01-10T09:00:00.000Z",
+              "sectionArticle": "আল-কুরআনে রয়েছে জীবনের সর্বাত্মক দিকনির্দেশনা, যা ব্যক্তি, সমাজ ও রাষ্ট্রের কল্যাণ নিশ্চিত করে।",
+              "sectionImages": [
+                "images/quranReading.jpg"
+              ]
+            },
+            {
+              "sectionID": "sec_257ea114e34e",
+              "sectionAddedDate": "2025-01-10T09:15:00.000Z",
+              "sectionArticle": "বিশেষ করে আরবি ভাষায় অবতীর্ণ হওয়া সত্ত্বেও আল-কুরআনের বাংলা অনুবাদগুলি সর্বস্তরের মানুষের কাছে ইসলামের বার্তা পৌঁছে দিতে সহায়ক হয়েছে।",
+              "sectionImages": []
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "godID": "god_34ca6fut9545",
+          "contentAddedDate": "2025-01-12T10:00:00.000Z",
+          "originalWritingDate": null
+        },
+        "article": {
+          "articleCover": "images/islamicPoetryCover.jpg",
+          "articleName": "বাংলা ইসলামিক কবিতা",
+          "articleTrailer": null,
+          "aboutArticle": "বাংলা ভাষায় রচিত ইসলামিক কবিতাগুলো ঈমান, আখিরাত ও মানবিক মূল্যবোধের প্রতিফলন ঘটায়।",
+          "mainContent": [
+            {
+              "sectionID": "sec_2524a7a4e27e",
+              "sectionAddedDate": "2025-01-12T10:05:00.000Z",
+              "sectionArticle": "অনেক কবিতায় আছে মহান আল্লাহর প্রতি আনুগত্য, রাসূল (সা.)-এর প্রতি মহব্বত ও মানবিক কল্যাণের আহ্বান।",
+              "sectionImages": [
+                "images/islamicPoetry.jpg"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "subcategoryID": "god_sub_deb4b400d4b4",
+    "subcategoryName": "nibondho_নিবন্ধ",
+    "content": [
+      {
+        "metadata": {
+          "godID": "god_9f4bae6f5ceb",
+          "contentAddedDate": "2025-01-15T07:00:00.000Z",
+          "originalWritingDate": "2025-01-14T00:00:00.000Z"
+        },
+        "article": {
+          "articleCover": "images/siratunnabiCover.jpg",
+          "articleName": "সীরাতুন্নবী (সা.) - নবীজীর জীবনচরিত",
+          "articleTrailer": "videos/siratunnabiTrailer.mp4",
+          "aboutArticle": "রাসূলুল্লাহ (সা.)-এর পূর্ণাঙ্গ জীবনচরিত, তাঁর আদর্শ ও সামাজিক সংস্কারে তাঁর অবদান নিয়ে বিস্তারিত বিবরণ এখানে দেওয়া হয়েছে।",
+          "mainContent": [
+            {
+              "sectionID": "sec_4deb3d3a04f1",
+              "sectionAddedDate": "2025-01-15T07:10:00.000Z",
+              "sectionArticle": "নবীজীর জন্ম, শৈশবকাল, নবুওয়াত প্রাপ্তি এবং মক্কা থেকে মদীনায় হিজরত — প্রতিটি পর্যায়ে ইসলামের প্রচার ও প্রতিষ্ঠা বিশদভাবে উঠে এসেছে।",
+              "sectionImages": [
+                "images/prophetsLife.jpg"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

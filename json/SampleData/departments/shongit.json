@@ -1,0 +1,153 @@
+[
+  {
+    "subcategoryID": "gan_sub_100100000001",
+    "subcategoryName": "BanglaGan_বাংলা গান",
+    "children": [
+      {
+        "subcategoryID": "gan_sub_sub_200100000001",
+        "subcategoryName": "Pop_পপ",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "ganID": "gan_300100000001",
+              "ganLink": "https://example.com/bangla-pop",
+              "contentAddedDate": "2024-01-01",
+              "originalWritingDate": "1993-01-01"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "articleName": "Ogo Chand by Miles",
+              "mainContent": [
+                {
+                  "sectionID": "sec_400100000001",
+                  "sectionAddedDate": "2024-01-01",
+                  "sectionArticle": "Ogo Chand is a timeless classic by Miles...",
+                  "sectionImages": ["Binary1", "Binary2"]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "subcategoryID": "gan_sub_sub_200100000002",
+        "subcategoryName": "RockAndMetal_রক এন্ড মেটাল",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "ganID": "gan_300100000002",
+              "ganLink": "https://example.com/bangla-rock",
+              "contentAddedDate": "2024-02-01",
+              "originalWritingDate": "2002-05-10"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "articleName": "Aushomapto by Aurthohin",
+              "mainContent": [
+                {
+                  "sectionID": "sec_400100000002",
+                  "sectionAddedDate": "2024-02-01",
+                  "sectionArticle": "Aushomapto is one of Aurthohin's most powerful rock songs...",
+                  "sectionImages": ["Binary3"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subcategoryID": "gan_sub_100200000001",
+    "subcategoryName": "BideshiGan_বিদেশি গান",
+    "children": [
+      {
+        "subcategoryID": "gan_sub_sub_200200000001",
+        "subcategoryName": "Pop",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "ganID": "gan_300200000001",
+              "ganLink": "https://example.com/international-pop",
+              "contentAddedDate": "2024-02-10",
+              "originalWritingDate": "1990-01-01"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "articleName": "Imagine by John Lennon",
+              "mainContent": [
+                {
+                  "sectionID": "sec_400200000001",
+                  "sectionAddedDate": "2024-02-10",
+                  "sectionArticle": "Imagine is one of the most iconic songs by John Lennon...",
+                  "sectionImages": ["Binary5", "Binary6"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subcategoryID": "gan_sub_100300000001",
+    "subcategoryName": "ShilpyJiboni_শিল্পী জীবনী",
+    "children": [
+      {
+        "subcategoryID": "gan_sub_sub_200300000001",
+        "subcategoryName": "BideshiShilpy_বিদেশী শিল্পী",
+        "contents": [
+          {
+            "metadata": {
+              "ganID": "gan_300300000001",
+              "contentAddedDate": "2024-01-05",
+              "originalWritingDate": "1985-12-01"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "articleName": "The Life of Freddie Mercury",
+              "aboutArticle": "A biography of the legendary Queen frontman.",
+              "mainContent": [
+                {
+                  "sectionID": "sec_400300000001",
+                  "sectionAddedDate": "2024-01-06",
+                  "sectionArticle": "Freddie Mercury's life and rise to fame...",
+                  "sectionImages": ["Binary7"]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "subcategoryID": "gan_sub_sub_200300000002",
+        "subcategoryName": "DeshiShilpy_দেশী শিল্পী",
+        "contents": [
+          {
+            "metadata": {
+              "ganID": "gan_300300000002",
+              "contentAddedDate": "2024-01-05",
+              "originalWritingDate": "1990-07-15"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "articleName": "Biography of Ayub Bachchu",
+              "aboutArticle": "A biography of Bangladesh's rock legend Ayub Bachchu.",
+              "mainContent": [
+                {
+                  "sectionID": "sec_400300000002",
+                  "sectionAddedDate": "2024-01-06",
+                  "sectionArticle": "Ayub Bachchu's journey from LRB to rock stardom...",
+                  "sectionImages": ["Binary8"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "ebook": [
+      {
+          "adventure": {
+              "metadata": {
+                  "eboId": "god_123456789",
+                  "dateAdded": "2024-01-01",
+                  "originDate": "1988-01-01 optional",
+                  "Review" : [{
+                    "reviewID" : "rev_asdqwe123456",
+                    "reviewDate" : "2024-02-02",
+                    "reviewComment" : "great book"
+                  }]
+              },
+              "article": {
+                  "aboutArticle": "Bla Bla Bla Optional",
+                  "articleTitle": "bla bla bla",
+                  "articlePublisher": "bla bla bla",
+                  "articleCover": "binary",
+                  "pdfUrl": "pdf"
+              }
+          }
+      },
+      {}
+  ]
+}

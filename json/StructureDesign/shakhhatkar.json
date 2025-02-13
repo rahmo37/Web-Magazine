@@ -1,0 +1,36 @@
+{
+  "shakkhatkar": [
+      {
+          "mukhomukhi": [
+              {
+                  "metadata": {
+                      "boiId": "sha_123456789",
+                      "dateAdded": "2024-01-01",
+                      "originDate": "1988-01-01 optional"
+                  },
+                  "article": {
+                      "articleCover": "Binary",
+                      "articleLink": "String",
+                      "articleName": "Shesher Kobita",
+                      "articleTrailer": "Bla Bla Bla",
+                      "mainContent": [
+                          {
+                              "section1": {
+                                  "sectionDate": "2024-01-01",
+                                  "sectionArticle": "Bla Bla Bla",
+                                  "sectionImage": {
+                                      "image1": "Binary",
+                                      "image2": "Binary"
+                                  }
+                              },
+                              "section2": {}
+                          }
+                      ]
+                  }
+              },
+              {}
+          ]
+      },
+      {}
+  ]
+}

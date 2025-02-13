@@ -1,0 +1,188 @@
+[
+  {
+    "subcategoryID": "art_sub_43fdd65ac999",
+    "subcategoryName": "Chitrokola_চিত্রকলা",
+    "children": [
+      {
+        "subcategoryID": "art_sub_sub_cf8a0f6ed7c7",
+        "subcategoryName": "ChitroKotha_চিত্রকথা",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "artID": "art_6575dc9644d5",
+              "contentAddedDate": "2024-01-01",
+              "originalWritingDate": "1988-01-01"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "aboutArticle": "This is a deep dive into Chitro art.",
+              "mainContent": [
+                {
+                  "sectionID": "sec_d89697ed22df",
+                  "sectionAddedDate": "2024-01-01",
+                  "sectionArticle": "Introduction to Chitro Art",
+                  "sectionImages": ["Binary1", "Binary2"]
+                }
+              ]
+            }
+          },
+          {
+            "metadata": {
+              "artID": "art_70acba26c6d3",
+              "contentAddedDate": "2024-02-01",
+              "originalWritingDate": "1990-05-10"
+            },
+            "article": {
+              "articleCover": "Binary",
+              "aboutArticle": "Second research on Chitro techniques.",
+              "mainContent": [
+                {
+                  "sectionID": "sec_0fd9c0ba1abe",
+                  "sectionAddedDate": "2024-02-01",
+                  "sectionArticle": "Brush Techniques",
+                  "sectionImages": ["Binary3"]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "subcategoryID": "art_sub_sub_43fda5hai980",
+        "subcategoryName": "ChitroProdorshoni_চিত্রপ্রদর্শনী",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "artID": "art_6575dc3444w2",
+              "contentAddedDate": "2024-01-01",
+              "originalWritingDate": "1995-06-12"
+            },
+            "article": {
+              "articleName": "Great Chitro Exhibitions",
+              "articleCover": "Binary",
+              "aboutArticle": "This is a deep dive into Chitro art.",
+              "mainContent": [
+                {
+                  "sectionID": "sec_39e0793b227a",
+                  "sectionAddedDate": "2024-01-02",
+                  "sectionImages": ["Binary1", "Binary2", "Binary3", "Binary4"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subcategoryID": "art_sub_1ab30d0dbcdb",
+    "subcategoryName": "Photography_ফটোগ্রাফি",
+    "children": [
+      {
+        "subcategoryID": "art_sub_sub_838f6d8fb885",
+        "subcategoryName": "ChobirGolpo_ছবির গল্প",
+        "children": [],
+        "contents": [
+          {
+            "metadata": {
+              "artID": "art_24c9dc6aee66",
+              "contentAddedDate": "2024-02-10",
+              "originalWritingDate": "1990-01-01"
+            },
+            "article": {
+              "articleName": "The Art of Visual Storytelling",
+              "aboutArticle": "This is a deep dive into Chitro art.",
+              "articleCover": "Binary",
+              "mainContent": [
+                {
+                  "sectionID": "sec_71f0fada621c",
+                  "sectionAddedDate": "2024-02-10",
+                  "sectionArticle": "How to Capture Emotion in Photography",
+                  "sectionImages": ["Binary5", "Binary6"]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "subcategoryID": "art_sub_e80baf5d882e",
+    "subcategoryName": "Nattokola_নাট্যকলা",
+    "children": [],
+    "contents": [
+      {
+        "metadata": {
+          "artID": "art_0dd81beed140",
+          "contentAddedDate": "2024-01-05",
+          "originalWritingDate": "1985-12-01"
+        },
+        "article": {
+          "articleCover": "Binary",
+          "articleName": "Theatrical Evolution",
+          "aboutArticle": "An overview of classic and modern plays.",
+          "mainContent": [
+            {
+              "sectionID": "sec_8816dcd0ef47",
+              "sectionAddedDate": "2024-01-06",
+              "sectionArticle": "The Roots of Theater",
+              "sectionImages": ["Binary7"]
+            }
+          ]
+        }
+      },
+      {
+        "metadata": {
+          "artID": "art_1b7900de37e4",
+          "contentAddedDate": "2024-04-05",
+          "originalWritingDate": "2010-01-10"
+
+        },
+        "article": {
+          "articleCover": "Binary",
+          "articleName": "Modern Theater Trends",
+          "aboutArticle": "Modern theatrical movements.",
+          "mainContent": [
+            {
+              "sectionID": "sec_ed0f863955a0",
+              "sectionAddedDate": "2024-04-06",
+              "sectionArticle": "Experimental Plays",
+              "sectionImages": ["Binary10", "Binary11"]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "subcategoryID": "art_sub_127601de47er",
+    "subcategoryName": "Sthapottokola_স্থাপত্যকলা",
+    "children": [],
+    "contents": [
+      {
+        "metadata": {
+          "artID": "art_7089faaa3d10",
+          "contentAddedDate": "2024-01-10",
+          "originalWritingDate": "2000-03-15",
+          "aboutArticle": "Architectural wonders of the world."
+        },
+        "article": {
+          "articleCover": "Binary",
+          "articleName": "History of Architecture",
+          "articleTrailer": "The journey from ancient to modern architecture",
+          "mainContent": [
+            {
+              "sectionID": "sec_e820d923727b",
+              "sectionAddedDate": "2024-01-11",
+              "sectionArticle": "Gothic vs. Modern Architecture",
+              "sectionImages": ["Binary8", "Binary9"]
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -28,11 +28,11 @@ const requestInfo = (req, res, next) => {
   const color = methodColors[req.method];
 
   // building the log message
-  const logMessage = "New Request Received".bgBlue + ` (${req.method}) -> URL:${
-    req.originalUrl
-  } | Platform: ${req.get("User-Agent")} | Protocol: ${
-    req.protocol
-  } | \nRequest received at: ${formattedDate}`;
+  const logMessage =
+    "New Request Received".bgBlue +
+    ` (${req.method}) -> URL:${req.originalUrl} | Platform: ${req.get(
+      "User-Agent"
+    )} | Protocol: ${req.protocol} | \nRequest received at: ${formattedDate}`;
 
   // logging the message
   console.log(logMessage[color]);

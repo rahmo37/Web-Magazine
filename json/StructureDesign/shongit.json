@@ -1,0 +1,137 @@
+{
+    "Shongit": [
+        {
+            "BanglaGan": [
+                {
+                    "pop": [
+                        {
+                            "metadata": {
+                                "ganId": "gan_123467891",
+                                "ganLink": "https://www.google.com/",
+                                "dateAdded": "2024-01-01",
+                                "originDate": "1988-01-01"
+                            },
+                            "article": {
+                                "articleCover": "Binary",
+                                "articleName": "Jodi kono din",
+                                "mainContent": [
+                                    {
+                                        "sectionID": "sec_001",
+                                        "sectionDate": "2024-01-01",
+                                        "sectionArticle": "Bla Bla Bla",
+                                        "sectionImages": [
+                                            "Binary1",
+                                            "Binary2"
+                                        ]
+                                    },
+                                    {
+                                        "sectionID": "sec_002",
+                                        "sectionDate": "2024-01-02",
+                                        "sectionArticle": "More content",
+                                        "sectionImages": [
+                                            "Binary3"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "RockAndMetal": []
+                },
+                {
+                    "MatirGan": []
+                },
+                {
+                    "CholochitroGan": []
+                },
+                {
+                    "Rap": []
+                }
+            ]
+        },
+        {
+            "BideshiGan": [
+                {
+                    "Pop": []
+                },
+                {
+                    "RockAndMetal": []
+                },
+                {
+                    "Country": []
+                },
+                {
+                    "Jazz": []
+                },
+                {
+                    "MovieTheme": []
+                },
+                {
+                    "Rap": []
+                }
+            ]
+        },
+        {
+            "ShilpyJiboni": [
+                {
+                    "BideshiShilpy": [
+                        {
+                            "metadata": {
+                                "ganId": "gan_123456789",
+                                "dateAdded": "2024-01-01",
+                                "aboutArticle": "Bla Bla Bla",
+                                "originDate": "1988-01-01"
+                            },
+                            "article": {
+                                "articleCover": "Binary",
+                                "articleName": "Shesher Kobita",
+                                "articleTrailer": "Bla Bla Bla",
+                                "mainContent": [
+                                    {
+                                        "sectionID": "sec_003",
+                                        "sectionDate": "2024-01-01",
+                                        "sectionArticle": "Bla Bla Bla",
+                                        "sectionImages": [
+                                            "Binary1",
+                                            "Binary2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "DeshiShilpy": [
+                        {
+                            "metadata": {
+                                "ganId": "gan_123456789",
+                                "dateAdded": "2024-01-01",
+                                "aboutArticle": "Bla Bla Bla",
+                                "originDate": "1988-01-01"
+                            },
+                            "article": {
+                                "articleCover": "Binary",
+                                "articleName": "Shesher Kobita",
+                                "articleTrailer": "Bla Bla Bla",
+                                "mainContent": [
+                                    {
+                                        "sectionID": "sec_003",
+                                        "sectionDate": "2024-01-01",
+                                        "sectionArticle": "Bla Bla Bla",
+                                        "sectionImages": [
+                                            "Binary1",
+                                            "Binary2"
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

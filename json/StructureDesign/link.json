@@ -1,0 +1,11 @@
+{
+  "link": [
+    {
+      "linkId": "lin_123456789",
+      "empId": "use_123456789",
+      "contentId": "god_123456789",
+      "fdcId": "fdc_123456789",
+      "sdcId": "sdc_123456789"
+    }
+  ]
+}

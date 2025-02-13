@@ -1,0 +1,166 @@
+{
+    "ArtOCulture": [
+        {
+            "chitroKola": [
+                {
+                    "chitroKotha": [
+                        {
+                            "metadata": {
+                                "artId": "art_123467891",
+                                "dateAdded": "2024-01-01",
+                                "originDate": "1988-01-01 Optional"
+                            },
+                            "article": {
+                                "articleCover": "Binary",
+                                "mainContent": [
+                                    {
+                                        "section1": {
+                                            "sectionDate": "2024-01-01",
+                                            "sectionArticle": "Bla Bla Bla",
+                                            "sectionImage": {
+                                                "image1": "Binary",
+                                                "image2": "Binary"
+                                            }
+                                        },
+                                        "section2": {}
+                                    }
+                                ]
+                            }
+                        },
+                        {}
+                    ]
+                },
+                {
+                    "chitroProdorshoni": [
+                        {
+                            "metadata": {
+                                "artId": "art_123467812",
+                                "dateAdded": "2024-01-01"
+                            },
+                            "article": {
+                                "articleName": "Bla Bla Bla",
+                                "images": {
+                                    "image1": "Binary",
+                                    "image2": "Binary"
+                                }
+                            }
+                        },
+                        {}
+                    ]
+                }
+            ]
+        },
+        {
+            "photography": [
+                {
+                    "chobirGolpo": [
+                        {
+                            "metadata": {
+                                "artId": "art_123467291",
+                                "dateAdded": "2024-01-01",
+                                "originDate": "1988-01-01 Optional"
+                            }
+                        },
+                        {
+                            "themeDescription": "Bla Bla Bla",
+                            "mainContent": [
+                                {
+                                    "section1": {
+                                        "sectionDate": "2024-01-01",
+                                        "sectionArticle": "Bla Bla Bla optional",
+                                        "sectionImage": "Binary"
+                                    },
+                                    "section2": {}
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "photographyKotha": [
+                        {
+                            "metadata": {
+                                "artId": "art_123467291",
+                                "dateAdded": "2024-01-01",
+                                "originDate": "1988-01-01 Optional"
+                            }
+                        },
+                        {
+                            "articleTitle": "Bla Bla Bla",
+                            "mainContent": [
+                                {
+                                    "section1": {
+                                        "sectionDate": "2024-01-01",
+                                        "sectionArticle": "Bla Bla Bla optional",
+                                        "sectionImage": "Binary"
+                                    },
+                                    "section2": {}
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Nattokola": [
+                {
+                    "metadata": {
+                        "artId": "art_123467291",
+                        "dateAdded": "2024-01-01",
+                        "aboutArticle": "Bla Bla Bla Optional",
+                        "originDate": "1988-01-01 optional"
+                    },
+                    "article": {
+                        "articleCover": "Binary",
+                        "articleName": "Shesher Kobita",
+                        "articleTrailer": "Bla Bla Bla",
+                        "mainContent": [
+                            {
+                                "section1": {
+                                    "sectionDate": "2024-01-01",
+                                    "sectionArticle": "Bla Bla Bla",
+                                    "sectionImage": {
+                                        "image1": "Binary",
+                                        "image2": "Binary"
+                                    }
+                                },
+                                "section2": {}
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "Sthapottokola": [
+                {
+                    "metadata": {
+                        "artId": "art_123467291",
+                        "dateAdded": "2024-01-01",
+                        "aboutArticle": "Bla Bla Bla Optional",
+                        "originDate": "1988-01-01 optional"
+                    },
+                    "article": {
+                        "articleCover": "Binary",
+                        "articleName": "Shesher Kobita",
+                        "articleTrailer": "Bla Bla Bla",
+                        "mainContent": [
+                            {
+                                "section1": {
+                                    "sectionDate": "2024-01-01",
+                                    "sectionArticle": "Bla Bla Bla",
+                                    "sectionImage": {
+                                        "image1": "Binary",
+                                        "image2": "Binary"
+                                    }
+                                },
+                                "section2": {}
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

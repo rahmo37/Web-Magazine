@@ -1,0 +1,57 @@
+{
+    "Kobita": [
+        {
+            "subcategoryA": [
+                {
+                    "metadata": {
+                        "kobId": "kob_123456789",
+                        "dateAdded": "2024-01-01",
+                        "originDate": "1988-01-01 optional"
+                    },
+                    "article": {
+                        "articleCover": "Binary",
+                        "articleName": "Ghore Bahire",
+                        "mainContent": [
+                            {
+                                "kobita1": {
+                                    "kobitaDate": "2024-01-01",
+                                    "kobitaContent": "Bla Bla Bla"
+                                },
+                                "kobita2": {
+                                    "kobitaDate": "2024-01-01",
+                                    "kobitaContent": "Bla Bla Bla"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "metadata": {
+                        "dateAdded": "2024-01-01",
+                        "kobId": "kob_123456780",
+                        "originDate": "1988-01-01 optional"
+                    },
+                    "article": {
+                        "articleCover": "Binary",
+                        "articleName": "Ghore Bahire",
+                        "mainContent": [
+                            {
+                                "kobita1": {
+                                    "kobitaDate": "2024-01-01",
+                                    "kobitaContent": "Bla Bla Bla"
+                                },
+                                "kobita2": {
+                                    "kobitaDate": "2024-01-01",
+                                    "kobitaContent": "Bla Bla Bla"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "subcategoryB": []
+        }
+    ]
+}

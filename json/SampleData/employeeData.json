@@ -1,0 +1,39 @@
+[
+    {
+      "employeeID": "EMP001",
+      "email": "admin@example.com",
+      "phone": "+1234567890",
+      "password": "hashed_password_here",
+      "dateJoined": "2023-01-15T10:00:00.000Z",
+      "isAdmin": true,
+      "department": ["Management", "IT"],
+      "accountCreated": "2023-01-15T10:00:00.000Z",
+      "isActiveAccount": true,
+      "lastLogin": "2024-06-10T08:30:00.000Z",
+      "employeeBio": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "gender": "Male",
+        "dateOfBirth": "1990-05-20T00:00:00.000Z"
+      }
+    },
+    {
+      "employeeID": "EMP002",
+      "email": "employee@example.com",
+      "phone": "+9876543210",
+      "password": "hashed_password_here",
+      "dateJoined": "2024-02-20T09:00:00.000Z",
+      "isAdmin": false,
+      "department": ["Sales"],
+      "accountCreated": "2024-02-20T09:00:00.000Z",
+      "isActiveAccount": false,
+      "lastLogin": null,
+      "employeeBio": {
+        "firstName": "Jane",
+        "lastName": "Smith",
+        "gender": "Female",
+        "dateOfBirth": "1995-08-12T00:00:00.000Z"
+      }
+    }
+  ]
+  
