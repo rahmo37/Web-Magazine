@@ -61,7 +61,7 @@ manageEmployee.addEmployee = async (req, res, next) => {
     newEmployeeObject.accountCreated = dateAndTime.getUtcRaw();
     newEmployeeObject.employeeID = generateID("emp_", 3);
 
-    // Now we create a employee
+    // Now create an employee
     const newEmployee = await Employee.createEmployee(newEmployeeObject);
 
     // If the unable to create employee
