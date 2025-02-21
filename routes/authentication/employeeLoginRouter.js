@@ -3,7 +3,7 @@
 // Imports
 const express = require("express");
 const employeeLoginRouter = express.Router();
-const employeeLoginController = require("../../controllers/loginControllers/employeeLoginController");
+const employeeLoginController = require("../../controllers/login/employeeLoginController");
 
 employeeLoginRouter.post("/", employeeLoginController.login);
 

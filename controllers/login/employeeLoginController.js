@@ -26,7 +26,8 @@ async function login(req, res, next) {
     }
 
     // Fetch the employee
-    const employee = await Employee.findOne({ email }).select("+password");
+    const employee = await Employee.getEmployeeByEmailWithPassword(email);
+    console.log(employee);
 
     // If no employee is found
     if (!employee) {
@@ -66,10 +67,19 @@ async function login(req, res, next) {
     }
 
     // Update the last login field
-    employee.lastLogin = dateAndTime.getUtcRaw();
+    const isLoginSaved = await employee.updateLastLogin(
+      dateAndTime.getUtcRaw()
+    );
 
-    // Save the updated employee
-    await employee.save();
+    // Check if the login was saved
+    if (!isLoginSaved) {
+      getErrorObj(
+        isDevelopment
+          ? "Error while saving the last login field"
+          : "Internal Server Error! Please contact your administrator.",
+        500
+      );
+    }
 
     // Creating a payload that will be sent with the token
     const userPayload = {

@@ -35,6 +35,8 @@ const {
   employeeLoginRouter,
 } = require("./routes/authentication/employeeLoginRouter");
 
+const { manageEmployeeRouter } = require("./routes/admin/manageEmployeeRouter");
+
 // ---------------------------------Project variables---------------------------------
 const PORT = process.env.PORT || 8000;
 
@@ -43,8 +45,12 @@ const PORT = process.env.PORT || 8000;
 // ---------------------------------Project Configurations----------------------------
 const app = express();
 
-// Limit request rate from an IP address
-app.use(requestRateLimiterObj?.general || ((req, res, next) => next()));
+// Limit request rate from an IP address if in production
+app.use(
+  process.env.NODE_ENV === "development"
+    ? (req, res, next) => next()
+    : requestRateLimiterObj?.general || ((req, res, next) => next())
+);
 
 //Set security headers
 app.use(helmet());
@@ -64,13 +70,20 @@ app.use(xss());
 // Log Request Information
 app.use(requestInfo);
 
+// !Also implement cookie
+
 // ---------------------------------End-points---------------------------------
 // Employee Routes
+// Rate-Limiter for login in production
 app.use(
   "/api/employee/login",
-  requestRateLimiterObj?.login || ((req, res, next) => next()),
+  process.env.NODE_ENV === "development"
+    ? (req, res, next) => next()
+    : requestRateLimiterObj?.login || ((req, res, next) => next()),
   employeeLoginRouter
 );
+
+app.use("/api/manage/employee", manageEmployeeRouter);
 
 // ---------------------------------Error Handlers---------------------------------
 // Not found error handler, if no routes matches this middleware is called

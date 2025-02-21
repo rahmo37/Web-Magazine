@@ -8,19 +8,27 @@ const requestRateLimiterObj = {};
 requestRateLimiterObj.general = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 min
   max: 100,
-  message: "Too many requests from this IP, please try again later.",
   headers: true,
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too many request, please try again later.",
+    });
+  },
 });
 
 requestRateLimiterObj.login = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 min
-  max: 3,
-  message: "Too many requests from this IP, please try again later.",
+  max: 5,
   headers: true,
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      error: "Too unsuccessful login attempts, please try again later.",
+    });
+  },
 });
 
 module.exports = { requestRateLimiterObj };
