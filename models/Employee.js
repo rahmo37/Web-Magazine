@@ -4,6 +4,7 @@
 
 // import packages
 const mongoose = require("mongoose");
+const { dateAndTime } = require("../helpers/dateAndTime");
 
 // creating schema instance
 const Schema = mongoose.Schema;
@@ -69,9 +70,21 @@ employeeSchema.statics.getEmployeeByEmailWithPassword = function (email) {
 };
 
 // Save last login of an employee
-employeeSchema.methods.updateLastLogin = function (newLogin) {
-  this.lastLogin = newLogin;
+employeeSchema.methods.updateLastLogin = function () {
+  this.lastLogin = dateAndTime.getUtcRaw();
   return this.save();
+};
+
+// Create an employee
+employeeSchema.statics.createEmployee = async function (employeeData) {
+  try {
+    // Create a new employee instance
+    const newEmployee = new this(employeeData);
+    // Save and return the employee document
+    return await newEmployee.save();
+  } catch (error) {
+    throw error;
+  }
 };
 
 const Employee = mongoose.model("Employee", employeeSchema, "employee");

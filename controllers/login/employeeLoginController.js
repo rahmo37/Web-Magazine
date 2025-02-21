@@ -5,7 +5,7 @@ const Employee = require("../../models/Employee");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const jwtConfig = require("../../config/jwtConfig");
-const { dateAndTime } = require("../../helpers/dateAndTime");
+
 const { getErrorObj } = require("../../helpers/getErrorObj");
 const isDevelopment = process.env.NODE_ENV === "development";
 const { sendRequest } = require("../../helpers/sendRequest");
@@ -67,9 +67,7 @@ async function login(req, res, next) {
     }
 
     // Update the last login field
-    const isLoginSaved = await employee.updateLastLogin(
-      dateAndTime.getUtcRaw()
-    );
+    const isLoginSaved = await employee.updateLastLogin();
 
     // Check if the login was saved
     if (!isLoginSaved) {

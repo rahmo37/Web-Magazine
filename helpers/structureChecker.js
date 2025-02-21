@@ -2,5 +2,5 @@
 const _ = require("lodash");
 
 module.exports = function (structure1, structure2) {
-  return _.isEqual(structure1, structure2);
+  return _.isEqual([...structure1].sort(), [...structure2].sort());
 };
