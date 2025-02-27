@@ -74,6 +74,8 @@ app.use(requestInfo);
 
 // ---------------------------------End-points---------------------------------
 // Employee Routes
+
+// Login route
 // Rate-Limiter for login in production
 app.use(
   "/api/employee/login",
@@ -83,6 +85,7 @@ app.use(
   employeeLoginRouter
 );
 
+// Manage Employee route
 app.use("/api/manage/employee", manageEmployeeRouter);
 
 // ---------------------------------Error Handlers---------------------------------

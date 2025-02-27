@@ -327,6 +327,7 @@ validator.department = function (department) {
 
   // Assuming department names should be one of the given values (case-insensitive)
   const validDepartments = [
+    "*",
     "goddo",
     "artoculture",
     "bigganoprojukti",

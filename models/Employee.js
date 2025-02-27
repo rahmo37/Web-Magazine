@@ -5,6 +5,7 @@
 // import packages
 const mongoose = require("mongoose");
 const { dateAndTime } = require("../helpers/dateAndTime");
+const { getErrorObj } = require("../helpers/getErrorObj");
 
 // creating schema instance
 const Schema = mongoose.Schema;
@@ -13,8 +14,8 @@ const Schema = mongoose.Schema;
 const employeeSchema = new Schema(
   {
     employeeID: { type: String, required: true, unique: true },
-    email: { type: String, require: true, unique: true },
-    phone: { type: String, require: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     dateJoined: { type: Date, required: true },
     isAdmin: { type: Boolean, default: false },
@@ -59,20 +60,86 @@ employeeSchema.statics.getKeys = function (data) {
   return keys;
 };
 
+// Get all employees
+employeeSchema.statics.getAllEmployees = async function () {
+  return await this.find({});
+};
+
 // Get an employee by email
-employeeSchema.statics.getEmployeeByEmail = function (email) {
-  return this.findOne({ email });
+employeeSchema.statics.getEmployeeByEmail = async function (email) {
+  return await this.findOne({ email });
+};
+
+// Get an employee by phone
+employeeSchema.statics.getEmployeeByPhone = async function (phone) {
+  return await this.findOne({ phone });
+};
+
+// Get an employee by ID
+employeeSchema.statics.getEmployeeByID = async function (ID) {
+  return await this.findOne({ employeeID: ID });
 };
 
 // Get an employee by email including the password
-employeeSchema.statics.getEmployeeByEmailWithPassword = function (email) {
-  return this.findOne({ email }).select("+password");
+employeeSchema.statics.getEmployeeByEmailWithPassword = async function (email) {
+  return await this.findOne({ email }).select("+password");
 };
 
 // Save last login of an employee
-employeeSchema.methods.updateLastLogin = function () {
+employeeSchema.methods.updateLastLogin = async function () {
   this.lastLogin = dateAndTime.getUtcRaw();
-  return this.save();
+  return await this.save();
+};
+
+// Update an employee
+employeeSchema.methods.updateAnEmployee = async function (updateInfo) {
+  try {
+    // Check if phone number exists for another employee
+    if (updateInfo.phone) {
+      const existingEmployee = await this.constructor.findOne({
+        phone: updateInfo.phone,
+      });
+
+      if (
+        existingEmployee &&
+        existingEmployee._id.toString() !== this._id.toString()
+      ) {
+        throw getErrorObj(
+          `Phone number ${updateInfo.phone} is already in use.`,
+          409
+        );
+      }
+    }
+
+    // Check if email exists for another employee
+    if (updateInfo.email) {
+      const existingEmployee = await this.constructor.findOne({
+        email: updateInfo.email,
+      });
+
+      if (
+        existingEmployee &&
+        existingEmployee._id.toString() !== this._id.toString()
+      ) {
+        throw getErrorObj(`Email ${updateInfo.email} is already in use.`, 409);
+      }
+    }
+
+    // Apply updates
+    Object.keys(updateInfo).forEach((key) => {
+      // Check if the key is supposed to be in the nested employeeBio object.
+      if (["firstName", "lastName", "gender", "dateOfBirth"].includes(key)) {
+        this.set(`employeeBio.${key}`, updateInfo[key]);
+      } else {
+        this.set(key, updateInfo[key]);
+      }
+    });
+
+    // Finally save the employee
+    return await this.save();
+  } catch (error) {
+    throw error;
+  }
 };
 
 // Create an employee
@@ -87,6 +154,18 @@ employeeSchema.statics.createEmployee = async function (employeeData) {
   }
 };
 
-const Employee = mongoose.model("Employee", employeeSchema, "employee");
+// Delete an employee
+employeeSchema.statics.deleteEmployeeByID = async function (ID) {
+  // Find the employee by their unique employeeID
+  const employee = await this.findOne({ employeeID: ID });
+  if (!employee) {
+    throw getErrorObj(`No employee found with the provided ID: ${ID}`, 404);
+  }
+  // Delete the employee document
+  return await employee.deleteOne();
+};
+
+// Create and export Employee model
+const Employee = mongoose.model("Employee", employeeSchema);
 
 module.exports = Employee;
