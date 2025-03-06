@@ -101,6 +101,7 @@ mongoose
   .then(() => {
     console.log("Database Connected...");
 
+    // Server starts listening
     app.listen(PORT, () => {
       console.log("App listening on port", PORT);
     });

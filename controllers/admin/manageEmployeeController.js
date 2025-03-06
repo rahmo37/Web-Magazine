@@ -230,7 +230,8 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     }
 
     // If the employee is an admin
-    if (ID !== req.user.id && req.user.isAdmin) {
+    console.log(req.user.isAdmin);
+    if (ID !== req.user.id && employee.isAdmin) {
       return next(
         getErrorObj(`You cannot update another admin's information`, 400)
       );

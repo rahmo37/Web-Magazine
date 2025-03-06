@@ -60,7 +60,7 @@ async function login(req, res, next) {
     if (!employee.isActiveAccount) {
       return next(
         getErrorObj(
-          "This account is currently inactive!. Please contact your administrator",
+          "This account is currently deactivated!. Please contact your administrator",
           401
         )
       );

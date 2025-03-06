@@ -51,6 +51,9 @@ employeeSchema.statics.getKeys = function (data) {
   ];
 
   // Get all schema paths and map each key to its final segment (i.e. employeeBio.firstName -> firstName)
+  // Splits keys by ".", then pops the last segment:
+  // - Nested keys: "employeeBio.value" → ["employeeBio", "value"] → "value"
+  // - Non-nested keys: "name" → ["name"] → "name"
   const allowedKeys = Object.keys(this.schema.paths)
     .map((key) => key.split(".").pop())
     .filter((key) => !exclude.includes(key));
