@@ -1,0 +1,1 @@
+- Change the employeeType in Model, Validation, Add The required field to the process.env, In the queries

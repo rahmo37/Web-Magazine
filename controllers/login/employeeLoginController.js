@@ -27,7 +27,6 @@ async function login(req, res, next) {
 
     // Fetch the employee
     const employee = await Employee.getEmployeeByEmailWithPassword(email);
-    console.log(employee);
 
     // If no employee is found
     if (!employee) {
@@ -84,7 +83,7 @@ async function login(req, res, next) {
       id: employee.employeeID,
       email: employee.email,
       role: "employee",
-      isAdmin: employee.isAdmin,
+      employeeType: employee.employeeType,
     };
 
     // Signing the token with payload, secret, and expiry time

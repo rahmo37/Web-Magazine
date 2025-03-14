@@ -1,6 +1,6 @@
 {
   "secondDegreeCreator" : [
-    { "sdcId" : "cre_123456789",
+    { "sdcId" : "sdc_123456789",
       "creatorName" : "Rakib Uddin",
       "creatorBio" : "Bla Bla Bla",
       "creatorImage" : "Binary"

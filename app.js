@@ -34,9 +34,10 @@ const Employee = require("./models/Employee");
 const {
   employeeLoginRouter,
 } = require("./routes/authentication/employeeLoginRouter");
-
 const { manageEmployeeRouter } = require("./routes/admin/manageEmployeeRouter");
-
+const {
+  manageGoddoRouter,
+} = require("./routes/employee/content/manageGoddoRouter");
 // ---------------------------------Project variables---------------------------------
 const PORT = process.env.PORT || 8000;
 
@@ -85,8 +86,11 @@ app.use(
   employeeLoginRouter
 );
 
-// Manage Employee route
+// Employee Manage Route
 app.use("/api/manage/employee", manageEmployeeRouter);
+
+// Content Management Route
+app.use("/api/manage/goddo", manageGoddoRouter);
 
 // ---------------------------------Error Handlers---------------------------------
 // Not found error handler, if no routes matches this middleware is called

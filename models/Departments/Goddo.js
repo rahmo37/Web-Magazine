@@ -44,6 +44,30 @@ const SubcategorySchema = new Schema(
   { timestamps: true, collection: "goddo" }
 );
 
+// Get all goddo
+SubcategorySchema.statics.getAllGoddo = async function () {
+  return await this.find({});
+};
+
+// Get one goddo
+SubcategorySchema.statics.getGoddoWithId = async function (godID) {
+  const result = await this.aggregate([
+    { $unwind: "$content" },
+    { $match: { "content.metadata.godID": godID } },
+    {
+      $project: {
+        _id: 0,
+        subcategoryName: 1,
+        metadata: "$content.metadata",
+        article: "$content.article",
+        _id: "$content._id",
+      },
+    },
+  ]);
+
+  return result.length ? result[0] : null;
+};
+
 const Goddo = mongoose.model("Goddo", SubcategorySchema, "goddo");
 
 module.exports = Goddo;

@@ -2,13 +2,16 @@
  * Employee model
  */
 
-// import packages
+// Import packages
 const mongoose = require("mongoose");
 const { dateAndTime } = require("../helpers/dateAndTime");
 const { getErrorObj } = require("../helpers/getErrorObj");
 
-// creating schema instance
+// Creating schema instance
 const Schema = mongoose.Schema;
+
+// Necessary Variables
+const EMP_TYPES = process.env.EMP_TYPES.split(",");
 
 // Employee Schema
 const employeeSchema = new Schema(
@@ -18,10 +21,15 @@ const employeeSchema = new Schema(
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     dateJoined: { type: Date, required: true },
-    isAdmin: { type: Boolean, default: false },
+    employeeType: {
+      type: String,
+      enum: [...EMP_TYPES],
+      default: "na",
+      required: true,
+    },
     department: { type: [String], required: true },
     accountCreated: { type: Date, required: true },
-    isActiveAccount: { type: Boolean, default: true },
+    isActiveAccount: { type: Boolean, default: true, required: true },
     lastLogin: { type: Date, default: null },
     employeeBio: {
       firstName: { type: String, required: true },
@@ -70,7 +78,7 @@ employeeSchema.statics.getAllEmployees = async function () {
 
 // Get an employee by email
 employeeSchema.statics.getEmployeeByEmail = async function (email) {
-  return await this.findOne({ email });
+  return await this.findOne({ email: email.toLowerCase() });
 };
 
 // Get an employee by phone
@@ -85,7 +93,7 @@ employeeSchema.statics.getEmployeeByID = async function (ID) {
 
 // Get an employee by email including the password
 employeeSchema.statics.getEmployeeByEmailWithPassword = async function (email) {
-  return await this.findOne({ email }).select("+password");
+  return await this.findOne({ email: email.toLowerCase() }).select("+password");
 };
 
 // Save last login of an employee

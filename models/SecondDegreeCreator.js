@@ -18,6 +18,12 @@ const SecondDegreeCreatorSchema = new Schema(
   { timestamps: true, collection: "secondDegreeCreator" }
 );
 
+
+// Get an employee by ID
+SecondDegreeCreatorSchema.statics.getSdcByID = async function (ID) {
+  return await this.findOne({ sdcID: ID });
+};
+
 const SecondDegreeCreator = mongoose.model(
   "SecondDegreeCreator",
   SecondDegreeCreatorSchema,

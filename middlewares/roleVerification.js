@@ -2,13 +2,19 @@
 
 // Object to accumulate functions
 const roleVerify = {};
+const { getErrorObj } = require("../helpers/getErrorObj");
 
-roleVerify.isAdmin = (req, res, next) => {
+roleVerify.isRootAdmin = (req, res, next) => {
+  if (!req.user) {
+    console.error(
+      "You must verify Json Web Token before calling 'isRootAdmin' middleware"
+    );
+    return next(getErrorObj());
+  }
   if (
-    !req.user ||
     req.user.role !== "employee" ||
     !req.user.id ||
-    !req.user.isAdmin
+    req.user.employeeType.toLowerCase() !== "ra"
   ) {
     const err = new Error(
       "You do not have permissions to perform this action!"
@@ -20,8 +26,13 @@ roleVerify.isAdmin = (req, res, next) => {
 };
 
 roleVerify.isEmployee = (req, res, next) => {
+  if (!req.user) {
+    console.error(
+      "You must verify Json Web Token before calling 'isEmployee' middleware"
+    );
+    return next(getErrorObj());
+  }
   if (
-    !req.user ||
     !req.user.id ||
     !req.user.id.startsWith("emp_") ||
     req.user.role !== "employee"

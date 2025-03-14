@@ -326,20 +326,8 @@ validator.department = function (department) {
   }
 
   // Assuming department names should be one of the given values (case-insensitive)
-  const validDepartments = [
-    "*",
-    "goddo",
-    "artoculture",
-    "bigganoprojukti",
-    "boipotro",
-    "cholochitro",
-    "ebook",
-    "kobita",
-    "shakhatkar",
-    "shomajodorshon",
-    "shongit",
-    "uponnash",
-  ];
+  const validDepartments = process.env.DEPARTMENTS.split(",");
+
   // Convert department array to lowercase strings for validation
   const lowerCaseDepts = department.map((dept) =>
     typeof dept === "string" ? dept.toLowerCase() : ""
@@ -397,12 +385,13 @@ validator.dateJoined = function (dateJoined) {
   };
 };
 
-//! --------------------isAdmin
-validator.isAdmin = function (isAdmin) {
+//! --------------------employeeType
+validator.employeeType = function (type) {
   const errors = [];
+  const EMP_TYPES = process.env.EMP_TYPES.split(",");
 
-  if (typeof isAdmin !== "boolean") {
-    errors.push("isAdmin must be a boolean value.");
+  if (!EMP_TYPES.includes(type)) {
+    errors.push("Employee type provided is invalid");
   }
 
   return {

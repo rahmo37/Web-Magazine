@@ -12,7 +12,7 @@ const roleVerify = require("../../middlewares/roleVerification");
 manageEmployeeRouter.use(
   authenticateToken,
   roleVerify.isEmployee,
-  roleVerify.isAdmin
+  roleVerify.isRootAdmin
 );
 
 // Request to '/' url
@@ -24,7 +24,7 @@ manageEmployeeRouter
   .post(validationHandler(), manageEmployeeController.addEmployee);
 
 manageEmployeeRouter
-  .route("/:ID")
+  .route("/:ID(emp_[A-Za-z0-9]{6})")
   // Get an employee
   .get(manageEmployeeController.getAnEmployee)
   // Update an employee

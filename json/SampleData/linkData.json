@@ -1,0 +1,23 @@
+[
+  {
+    "linkID": "lin_234567890",
+    "employeeID": "emp_ae9da3",
+    "contentID": "god_34ca6f8a9555",
+    "fdcID": "fdc_b86e370eb0e7",
+    "sdcID": "sdc_ee5794229139"
+  },
+  {
+    "linkID": "lin_345678901",
+    "employeeID": "emp_33d8f1",
+    "contentID": "god_34ca6fut9545",
+    "fdcID": "fdc_b6f653009370",
+    "sdcID": "sdc_e6e325285cd5"
+  },
+  {
+    "linkID": "lin_456789012",
+    "employeeID": "emp_135028",
+    "contentID": "god_9f4bae6f5ceb",
+    "fdcID": "fdc_09083fece2f4",
+    "sdcID": null
+  }
+]

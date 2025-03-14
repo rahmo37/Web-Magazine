@@ -18,6 +18,11 @@ const FirstDegreeCreatorSchema = new Schema(
   { timestamps: true, collection: "firstDegreeCreator" }
 );
 
+// Get an employee by ID
+FirstDegreeCreatorSchema.statics.getFdcByID = async function (ID) {
+  return await this.findOne({ fdcID: ID });
+};
+
 const FirstDegreeCreator = mongoose.model(
   "FirstDegreeCreator",
   FirstDegreeCreatorSchema,

@@ -87,12 +87,12 @@ manageEmployee.addEmployee = async (req, res, next) => {
     }
 
     // Destructuring values
-    const {
+    let {
       email,
       phone,
       password,
       dateJoined,
-      isAdmin,
+      employeeType,
       department,
       firstName,
       lastName,
@@ -126,13 +126,21 @@ manageEmployee.addEmployee = async (req, res, next) => {
       );
     }
 
+    // If root admin provide full content access
+    if (employeeType === "ra") {
+      department = ["*"];
+    }
+
+    // Make each dept name lowercase
+    department = department.map((dept) => dept.toLowerCase());
+
     // Creating new employee with values
     const newEmployeeObject = {
-      email,
+      email: email.toLowerCase(),
       phone,
       password: await getHashedPassword(password),
       dateJoined,
-      isAdmin,
+      employeeType,
       department,
       employeeBio: { firstName, lastName, gender, dateOfBirth },
     };
@@ -159,7 +167,7 @@ manageEmployee.addEmployee = async (req, res, next) => {
     // Now sending the response with the new employee data
     sendRequest({
       res,
-      statusCode: 200,
+      statusCode: 201,
       message: "New employee created",
       data: newEmployee,
     });
@@ -196,7 +204,7 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     // Now retrieve the update information
     const updateInfo = req.body;
 
-    // If no update info provided or the update object is empty
+    // If no update info provided or if the info is not a JS object or if the update object is empty
     if (
       !updateInfo ||
       typeof updateInfo !== "object" ||
@@ -212,7 +220,7 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     // Convert employee keys to a Set for faster lookup
     const employeeKeysSet = new Set(Employee.getKeys());
 
-    // Add the isActiveAccount filed manually since the getKeys() does not return isActiveAccount key
+    // Add the isActiveAccount field manually since the getKeys() does not return isActiveAccount key
     if (ID !== req.user.id) {
       employeeKeysSet.add("isActiveAccount");
     }
@@ -222,7 +230,7 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
       (key) => !employeeKeysSet.has(key)
     );
 
-    // If there are invalid keys, returns an error
+    // If there are invalid keys, return an error
     if (invalidKeys.length > 0) {
       return next(
         getErrorObj(`Invalid keys found: ${invalidKeys.join(", ")}`, 400)
@@ -230,10 +238,9 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     }
 
     // If the employee is an admin
-    console.log(req.user.isAdmin);
-    if (ID !== req.user.id && employee.isAdmin) {
+    if (ID !== req.user.id && employee.employeeType === "ra") {
       return next(
-        getErrorObj(`You cannot update another admin's information`, 400)
+        getErrorObj(`You cannot update another root admin's information`, 400)
       );
     }
 
@@ -241,6 +248,21 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     if (flattenedUpdateInfo.password) {
       flattenedUpdateInfo.password = await getHashedPassword(
         flattenedUpdateInfo.password
+      );
+    }
+
+    // If the employee is promoted to root admin, then change the department to *
+    if (
+      flattenedUpdateInfo.employeeType &&
+      flattenedUpdateInfo.employeeType === "ra"
+    ) {
+      flattenedUpdateInfo.department = ["*"];
+    }
+
+    // if department is being updated ensure all the names are in lowercase
+    if (flattenedUpdateInfo.department) {
+      flattenedUpdateInfo.department = flattenedUpdateInfo.department.map(
+        (dept) => dept.toLowerCase()
       );
     }
 
@@ -299,7 +321,7 @@ manageEmployee.deleteAnEmployee = async (req, res, next) => {
     }
 
     // If the ID provided is another admin's
-    if (ID !== req.user.id && employee.isAdmin) {
+    if (ID !== req.user.id && employee.employeeType === "ra") {
       return next(
         getErrorObj(`You cannot delete another admin's account`, 403)
       );
