@@ -40,6 +40,7 @@ manageEmployee.getAllEmployees = async (req, res, next) => {
 // Get an employee
 manageEmployee.getAnEmployee = async (req, res, next) => {
   try {
+
     // Retrieve the id
     const { ID } = req.params;
 

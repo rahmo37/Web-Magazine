@@ -43,7 +43,7 @@ const PORT = process.env.PORT || 8000;
 
 //!Application logic starts here -->
 
-// ---------------------------------Project Configurations----------------------------
+// -------------------------Project Configurations and Security-----------------------
 const app = express();
 
 // Limit request rate from an IP address if in production

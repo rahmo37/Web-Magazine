@@ -15,7 +15,10 @@ const manageGoddo = {};
 // Get all goddo. Contents will be filtered according to the employeeID unless the employee is an Admin
 manageGoddo.getAllGoddo = async function (req, res, next) {
   try {
+    // Get the logged in user's id
     const employeeID = req.user.id;
+
+    // Check the employee type (root admin, department admin, not an admin)
     const hasFullAccess = checkAccess(req.user);
 
     // Get the goddo links
@@ -30,6 +33,7 @@ manageGoddo.getAllGoddo = async function (req, res, next) {
 
     // Use Promise.all to wait for all the async operations in the map to complete
     const allGoddoAndInfo = await Promise.all(
+      // Fetch data for each link
       goddoLinks.map(async (eachLink) => {
         const [employee, content, fdc, sdc] = await Promise.all([
           hasFullAccess ? Employee.getEmployeeByID(eachLink.employeeID) : null,
@@ -38,11 +42,37 @@ manageGoddo.getAllGoddo = async function (req, res, next) {
           SecondDegreeCreator.getSdcByID(eachLink.sdcID),
         ]);
 
+        // If content not found with the link
+        if (!content) {
+          console.warn("Could not find any content with this link", eachLink);
+          return null;
+        }
+
+        // If fdc not found with the link
+        if (!fdc) {
+          console.warn("Could not find any fdc with this link", eachLink);
+          return null;
+        }
+
+        // If sdc not found with the link
+        if (eachLink.sdcID && !sdc) {
+          console.warn("Could not find any sdc with this link", eachLink);
+          return null;
+        }
+
         // Combine result for each link
         const eachResult = { eachLink, content, fdc, sdc };
 
         // If employee is a root admin or a department admin then add the employee info
         if (hasFullAccess) {
+          // If employee info was not found
+          if (!employee) {
+            console.warn(
+              "Could not find any employee with this link",
+              eachLink
+            );
+            return null;
+          }
           eachResult.employee = employee;
         }
 
