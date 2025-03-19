@@ -94,10 +94,16 @@ manageGoddo.getAllGoddo = async function (req, res, next) {
   }
 };
 
+// Get one goddo when id is provided
 manageGoddo.getAGoddo = async function (req, res, next) {
   // Gather necessary info from the request
+  // Get the logged in user's id
   const employeeID = req.user.id;
+
+  // Check the employee type (root admin, department admin, not an admin)
   const hasFullAccess = checkAccess(req.user);
+
+  // Getting the goddo ID
   const godID = req.params.ID;
 
   // Get the goddo link
@@ -123,6 +129,23 @@ manageGoddo.getAGoddo = async function (req, res, next) {
     SecondDegreeCreator.getSdcByID(goddoLink.sdcID),
   ]);
 
+  if (!content) {
+    console.warn("Could not find any content with this link", goddoLink);
+    return next(getErrorObj());
+  }
+
+  // If fdc not found with the link
+  if (!fdc) {
+    console.warn("Could not find any fdc with this link", goddoLink);
+    return next(getErrorObj());
+  }
+
+  // If sdc not found with the link
+  if (goddoLink.sdcID && !sdc) {
+    console.warn("Could not find any sdc with this link", goddoLink);
+    return next(getErrorObj());
+  }
+
   // If the logged in employee is not an Admin, no need to send the employee information
   const goddoAndInfo = {
     content,
@@ -132,6 +155,11 @@ manageGoddo.getAGoddo = async function (req, res, next) {
 
   // If the logged in employee is an Admin, send the corresponding employee info
   if (hasFullAccess) {
+    // If employee info was not found
+    if (!employee) {
+      console.warn("Could not find any employee with this link", goddoLink);
+      return next(getErrorObj());
+    }
     goddoAndInfo.employee = employee;
   }
 
@@ -143,6 +171,11 @@ manageGoddo.getAGoddo = async function (req, res, next) {
       "Goddo content attached with employee (If available), fdc, sdc information",
     data: goddoAndInfo,
   });
+};
+
+// Post a goddo
+manageGoddo.postAGoddo = async function (req, res, next) {
+  
 };
 
 // Export the module

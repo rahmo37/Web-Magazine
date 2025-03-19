@@ -1,11 +1,22 @@
 // This module has all the validation logic.
-// This module may contain redundant code intentionally
+// This module may contain redundant code intentionally, since the validations are checked on the keyname
 // Importing necessary modules
 const { parsePhoneNumberFromString } = require("libphonenumber-js");
 
 // Helper function to number error messages
 function numberErrors(errors) {
   return errors.map((err, index) => `${index + 1}. ${err}`);
+}
+
+function isBengaliName(text) {
+  const bengaliNameRegex =
+    /^(?!.*[\u09E6-\u09EF])[\u0980-\u09FF]+(?: [\u0980-\u09FF]+)*$/;
+  return bengaliNameRegex.test(text);
+}
+
+function isEnglishName(text) {
+  const englishNameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
+  return englishNameRegex.test(text);
 }
 
 // Module Scaffolding
@@ -303,10 +314,11 @@ validator.dateOfBirth = function (dateOfBirth) {
 
 //! --------------------Department
 /**
- *  Validates that the department:
- *    - Is provided.
- *    - Is an array.
- *    - Contains at least one element.
+ * Validates that the department:
+ *  - Is provided.
+ *  - Is an array.
+ *  - Contains at least one element.
+ *  - Each department name (after converting to lowercase) is one of the allowed names from process.env.DEPARTMENTS.
  */
 validator.department = function (department) {
   const errors = [];
@@ -343,6 +355,13 @@ validator.department = function (department) {
 };
 
 //! --------------------Date Joined
+/**
+ * Validates the "date joined" value:
+ *  - It must be provided as a non-empty string.
+ *  - It must follow the format YYYY-MM-DD.
+ *  - It must represent a valid date (i.e. no auto-correction issues).
+ *  - It must not be a future date.
+ */
 validator.dateJoined = function (dateJoined) {
   const errors = [];
 
@@ -386,6 +405,10 @@ validator.dateJoined = function (dateJoined) {
 };
 
 //! --------------------employeeType
+/**
+ * Validates the employee type:
+ *  - Checks that the provided employee type is one of the allowed types defined in process.env.EMP_TYPES.
+ */
 validator.employeeType = function (type) {
   const errors = [];
   const EMP_TYPES = process.env.EMP_TYPES.split(",");
@@ -401,11 +424,140 @@ validator.employeeType = function (type) {
 };
 
 //! --------------------isActiveAccount
+/**
+ * Validates that the "isActiveAccount" value:
+ *  - Is of type boolean.
+ */
 validator.isActiveAccount = function (isActiveAccount) {
   const errors = [];
 
   if (typeof isActiveAccount !== "boolean") {
     errors.push("isActiveAccount must be a boolean value.");
+  }
+
+  return {
+    valid: errors.length === 0,
+    error: numberErrors(errors),
+  };
+};
+
+//! --------------------creatorName
+/**
+ * Validates the creator name:
+ *  - Must be provided as a non-empty string.
+ *  - Must contain exactly one underscore separating the English and Bangla names.
+ *  - The portion before the underscore must be a valid English name (letters only, with spaces, hyphens or apostrophes allowed).
+ *  - The portion after the underscore must be a valid Bangla name (Bengali letters only, with spaces allowed).
+ */
+validator.creatorName = function (name) {
+  const errors = [];
+  const EXAMPLE = "(e.g., John_জন)";
+  if (!name || typeof name !== "string") {
+    errors.push("Creator name must be provided as a non-empty string.");
+  } else {
+    const namesArr = name.split("_");
+    if (namesArr.length !== 2) {
+      errors.push(
+        "Not a valid creator name, an underscore should separate the English name from the Bangla name. " +
+          EXAMPLE
+      );
+    } else {
+      // Validate the English name part
+      if (!isEnglishName(namesArr[0])) {
+        errors.push(
+          "The English name is invalid. Please provide a valid English name before the underscore " +
+            EXAMPLE
+        );
+      }
+
+      // Validate the Bangla name part
+      if (!isBengaliName(namesArr[1])) {
+        errors.push(
+          "The Bangla name is invalid. Please provide a valid Bangla name after the underscore. " +
+            EXAMPLE
+        );
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    error: numberErrors(errors),
+  };
+};
+
+//! --------------------creatorBio
+/**
+ * Validates the creator's Bangla bio:
+ *  - The bio must not be empty.
+ *  - The bio must be at least 50 characters and no more than 3000 characters.
+ *  - The bio must contain at least one Bengali character (while other symbols, including English words, are allowed).
+ */
+validator.creatorBio = function (bio) {
+  const errors = [];
+
+  // Ensure the bio is not empty
+  if (!bio || bio.trim().length === 0) {
+    errors.push("Bangla bio cannot be empty.");
+    return { valid: false, error: numberErrors(errors) };
+  }
+
+  const trimmedBio = bio.trim();
+
+  // Length validations
+  if (trimmedBio.length < 50) {
+    errors.push("Bangla bio must be at least 50 characters long.");
+  }
+  if (trimmedBio.length > 3000) {
+    errors.push("Bangla bio must be no more than 3000 characters long.");
+  }
+
+  // Regex to allow any characters but require at least one Bengali letter
+  const banglaBioRegex = /^(?=.*[\u0980-\u09FF])[\s\S]+$/;
+  if (!banglaBioRegex.test(trimmedBio)) {
+    errors.push(
+      "Bangla bio must include at least one Bengali character (English words are allowed)."
+    );
+  }
+
+  return {
+    valid: errors.length === 0,
+    error: numberErrors(errors),
+  };
+};
+
+//! --------------------creatorImage
+/**
+ * Validates the creator image string:
+ *  - Must be provided as a non-empty string.
+ *  - Must contain exactly one dot, which separates the filename from the extension.
+ *  - The file extension must be one of the allowed types: jpg, jpeg, png, gif, or webp.
+ */
+validator.creatorImage = function (imageStr) {
+  const errors = [];
+  const allowedTypes = ["jpg", "jpeg", "png", "gif", "webp"];
+
+  // Check that imageStr is a non-empty string.
+  if (typeof imageStr !== "string" || !imageStr.trim()) {
+    errors.push("Image string must be a non-empty string.");
+  } else {
+    // Split the string by the dot.
+    const parts = imageStr.split(".");
+
+    // The image string should contain exactly one dot (two parts)
+    if (parts.length !== 2) {
+      errors.push(
+        "Image string must contain exactly one dot separating the filename and extension."
+      );
+    } else {
+      // Extract and validate the extension.
+      const ext = parts.pop().toLowerCase();
+      if (!allowedTypes.includes(ext)) {
+        errors.push(
+          `Image type must be one of the following: ${allowedTypes.join(", ")}.`
+        );
+      }
+    }
   }
 
   return {

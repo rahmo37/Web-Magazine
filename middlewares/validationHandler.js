@@ -1,5 +1,6 @@
 // Assuming your validator object is imported or available in this module
-const { validator } = require("../helpers/validator");
+const { validator } = require("../helpers/validator.js");
+const { getErrorObj } = require("../helpers/getErrorObj");
 
 function validateFields(data, options = {}) {
   for (const key in data) {
@@ -17,8 +18,8 @@ function validateFields(data, options = {}) {
       const result = validator[key](value);
       if (!result.valid) {
         const error = new Error(
-          `Validation error on ${key.toLocaleUpperCase()}: ${result.error.join(
-            ", "
+          `Validation error on key(${key})=value(${value}): ${result.error.join(
+            `, `
           )}`
         );
         error.field = key;
@@ -48,6 +49,13 @@ function validateFields(data, options = {}) {
 function validationHandler(options = {}) {
   return function (req, res, next) {
     try {
+      if (
+        !req.body ||
+        Array.isArray(req.body) ||
+        Object.keys(req.body).length === 0
+      ) {
+        next(getErrorObj("Invalid body provided!", 400));
+      }
       // Validate req.body recursively with the provided options
       validateFields(req.body, options);
       // If everything is valid, move to the next middleware
