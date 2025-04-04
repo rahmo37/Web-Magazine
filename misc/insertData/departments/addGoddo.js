@@ -1,6 +1,7 @@
 // Importing necessary modules
 const path = require("path");
-const envPath = path.join(__dirname, "../../../.env");
+const envPath = path.join(__dirname, "../../../.env.development");
+console.log(envPath);
 require("dotenv").config({ path: envPath });
 const mongoose = require("mongoose");
 const fs = require("fs");
@@ -14,9 +15,7 @@ mongoose
     console.log("MongoDB connected...");
     insertGoddo();
   })
-  .catch((err) => {
-    (err) => console.log("MongoDB connection error: ", err);
-  });
+  .catch((err) => console.log("MongoDB connection error: ", err));
 
 const insertGoddo = async () => {
   try {
