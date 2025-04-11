@@ -8,7 +8,7 @@ module.exports = function flattenObject(obj) {
         if (
           obj[key] !== null &&
           typeof obj[key] === "object" &&
-          !Array.isArray(obj[key])
+          ifArrayAndHasObjects(obj[key])
         ) {
           result = { ...result, ...flattenObject(obj[key]) };
         } else {
@@ -22,3 +22,11 @@ module.exports = function flattenObject(obj) {
     throw error;
   }
 };
+
+// This function checks if a value is an array and if that array ahs object inside
+function ifArrayAndHasObjects(value) {
+  if (!Array.isArray(value)) {
+    return true;
+  }
+  return value.some((each) => typeof each === "object" && !Array.isArray(each));
+}

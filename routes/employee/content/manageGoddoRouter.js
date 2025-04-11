@@ -7,6 +7,7 @@ const manageGoddoController = require("../../../controllers/employee/content/man
 const authenticateToken = require("../../../middlewares/jwtTokenVerify");
 const roleVerify = require("../../../middlewares/roleVerification");
 const { accessVerify } = require("../../../middlewares/verifyEmployeeAccess");
+const verifyReqBody = require("../../../middlewares/verifyReqBody");
 
 // Request must have JWT token, must come from an employee
 manageGoddoRouter.use(
@@ -15,8 +16,12 @@ manageGoddoRouter.use(
   accessVerify("goddo")
 );
 
-// Get all godoo
-manageGoddoRouter.get("/", manageGoddoController.getAllGoddo);
+manageGoddoRouter
+  .route("/")
+  // Get all godoo
+  .get(manageGoddoController.getAllGoddo)
+  // Post a goddo
+  .post(verifyReqBody, manageGoddoController.postAGoddo);
 
 // Gat a goddo
 manageGoddoRouter.get(

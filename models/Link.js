@@ -45,6 +45,12 @@ LinkSchema.statics.getByContentID = async function (contentID) {
   return await this.findOne({ contentID });
 };
 
+LinkSchema.statics.createLink = async function (linkData, session) {
+  const newLink = new Link(linkData);
+  await newLink.save({ session });
+  return newLink;
+};
+
 const Link = mongoose.model("Link", LinkSchema, "link");
 
 module.exports = Link;

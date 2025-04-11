@@ -14,7 +14,7 @@ const Schema = mongoose.Schema;
 const EMP_TYPES = process.env.EMP_TYPES.split(",");
 
 // Employee Schema
-const employeeSchema = new Schema(
+const EmployeeSchema = new Schema(
   {
     employeeID: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
@@ -47,7 +47,7 @@ const employeeSchema = new Schema(
  */
 
 // Employee validation field
-employeeSchema.statics.getKeys = function (data) {
+EmployeeSchema.statics.getKeys = function () {
   // Excluded fields
   const exclude = [
     "employeeID",
@@ -72,38 +72,38 @@ employeeSchema.statics.getKeys = function (data) {
 };
 
 // Get all employees
-employeeSchema.statics.getAllEmployees = async function () {
+EmployeeSchema.statics.getAllEmployees = async function () {
   return await this.find({});
 };
 
 // Get an employee by email
-employeeSchema.statics.getEmployeeByEmail = async function (email) {
+EmployeeSchema.statics.getEmployeeByEmail = async function (email) {
   return await this.findOne({ email: email.toLowerCase() });
 };
 
 // Get an employee by phone
-employeeSchema.statics.getEmployeeByPhone = async function (phone) {
+EmployeeSchema.statics.getEmployeeByPhone = async function (phone) {
   return await this.findOne({ phone });
 };
 
 // Get an employee by ID
-employeeSchema.statics.getEmployeeByID = async function (ID) {
+EmployeeSchema.statics.getEmployeeByID = async function (ID) {
   return await this.findOne({ employeeID: ID });
 };
 
 // Get an employee by email including the password
-employeeSchema.statics.getEmployeeByEmailWithPassword = async function (email) {
+EmployeeSchema.statics.getEmployeeByEmailWithPassword = async function (email) {
   return await this.findOne({ email: email.toLowerCase() }).select("+password");
 };
 
 // Save last login of an employee
-employeeSchema.methods.updateLastLogin = async function () {
+EmployeeSchema.methods.updateLastLogin = async function () {
   this.lastLogin = dateAndTime.getUtcRaw();
   return await this.save();
 };
 
 // Update an employee
-employeeSchema.methods.updateAnEmployee = async function (updateInfo) {
+EmployeeSchema.methods.updateAnEmployee = async function (updateInfo) {
   try {
     // Check if phone number exists for another employee
     if (updateInfo.phone) {
@@ -154,7 +154,7 @@ employeeSchema.methods.updateAnEmployee = async function (updateInfo) {
 };
 
 // Create an employee
-employeeSchema.statics.createEmployee = async function (employeeData) {
+EmployeeSchema.statics.createEmployee = async function (employeeData) {
   try {
     // Create a new employee instance
     const newEmployee = new this(employeeData);
@@ -166,7 +166,7 @@ employeeSchema.statics.createEmployee = async function (employeeData) {
 };
 
 // Delete an employee
-employeeSchema.statics.deleteEmployeeByID = async function (ID) {
+EmployeeSchema.statics.deleteEmployeeByID = async function (ID) {
   // Find the employee by their unique employeeID
   const employee = await this.findOne({ employeeID: ID });
   if (!employee) {
@@ -177,6 +177,6 @@ employeeSchema.statics.deleteEmployeeByID = async function (ID) {
 };
 
 // Create and export Employee model
-const Employee = mongoose.model("Employee", employeeSchema);
+const Employee = mongoose.model("Employee", EmployeeSchema);
 
 module.exports = Employee;

@@ -333,7 +333,7 @@ validator.department = function (department) {
     return { valid: false, error: numberErrors(errors) };
   }
 
-  if (department.length === 0) {
+  if (department.length === 0) {tut_123456
     errors.push("Department array must contain at least one element.");
   }
 

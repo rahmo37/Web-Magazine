@@ -51,6 +51,7 @@ function validationHandler(options = {}) {
     try {
       if (
         !req.body ||
+        typeof req.body !== "object" ||
         Array.isArray(req.body) ||
         Object.keys(req.body).length === 0
       ) {

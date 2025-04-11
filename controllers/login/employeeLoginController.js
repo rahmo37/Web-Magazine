@@ -80,7 +80,7 @@ async function login(req, res, next) {
 
     // Creating a payload that will be sent with the token
     const userPayload = {
-      id: employee.employeeID,
+      ID: employee.employeeID,
       email: employee.email,
       role: "employee",
       employeeType: employee.employeeType,

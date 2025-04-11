@@ -5,6 +5,7 @@
 
 // importing packages
 const mongoose = require("mongoose");
+const { getErrorObj } = require("../../helpers/getErrorObj");
 
 // creating schema instance
 const Schema = mongoose.Schema;
@@ -50,7 +51,7 @@ SubcategorySchema.statics.getAllGoddo = async function () {
 };
 
 // Get one goddo
-SubcategorySchema.statics.getGoddoWithId = async function (godID) {
+SubcategorySchema.statics.getGoddoWithID = async function (godID) {
   const result = await this.aggregate([
     { $unwind: "$content" },
     { $match: { "content.metadata.godID": godID } },
@@ -66,6 +67,56 @@ SubcategorySchema.statics.getGoddoWithId = async function (godID) {
   ]);
 
   return result.length ? result[0] : null;
+};
+
+// Get goddo keys
+SubcategorySchema.statics.getKeys = function () {
+  // Excluded fields
+  const exclude = [
+    "subcategoryName",
+    "_id",
+    "__v",
+    "content",
+    "godID",
+    "contentAddedDate",
+    "articleTrailer",
+    "aboutArticle",
+    "mainContent",
+    "sectionAddedDate",
+    "sectionID",
+    "sectionImages",
+    "createdAt",
+    "updatedAt",
+  ];
+  const allowedKeys = [
+    ...Object.keys(this.schema.paths),
+    ...Object.keys(ArticleSchema.paths),
+    ...Object.keys(MetadataSchema.paths),
+    ...Object.keys(SectionSchema.paths),
+  ]
+    .map((key) => key.split(".").pop())
+    .filter((key) => !exclude.includes(key));
+
+  const keys = [...new Set(allowedKeys)];
+  return keys;
+};
+
+SubcategorySchema.statics.createAGoddoWithSubcategoryID = async function (
+  subcategoryID,
+  goddoData,
+  session
+) {
+  // First find the subcategory
+  const subcategory = await this.findOne({ subcategoryID });
+  // If not found
+  if (!subcategory) {
+    throw getErrorObj("No subcategory found with the provided subcategoryID");
+  }
+  // Then add the goddoData
+  subcategory.content.push(goddoData);
+  // Finally save
+  await subcategory.save({ session });
+  return subcategory;
 };
 
 const Goddo = mongoose.model("Goddo", SubcategorySchema, "goddo");

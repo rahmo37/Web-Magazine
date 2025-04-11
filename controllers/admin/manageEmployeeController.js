@@ -40,11 +40,10 @@ manageEmployee.getAllEmployees = async (req, res, next) => {
 // Get an employee
 manageEmployee.getAnEmployee = async (req, res, next) => {
   try {
-
-    // Retrieve the id
+    // Retrieve the ID
     const { ID } = req.params;
 
-    // If the id does not start with emp_
+    // If the ID does not start with emp_
     if (!ID.startsWith("emp_")) {
       return next(
         getErrorObj(`ID provided with the request is not valid`, 404)
@@ -184,10 +183,10 @@ manageEmployee.addEmployee = async (req, res, next) => {
 // Update an employee info
 manageEmployee.updateAnEmployee = async (req, res, next) => {
   try {
-    // Retrieve the id
+    // Retrieve the ID
     const { ID } = req.params;
 
-    // If the id does not start with emp_
+    // If the ID does not start with emp_
     if (!ID.startsWith("emp_")) {
       return next(
         getErrorObj(`ID provided with the request is not valid`, 404)
@@ -205,16 +204,6 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     // Now retrieve the update information
     const updateInfo = req.body;
 
-    // If no update info provided or if the info is not a JS object or if the update object is empty
-    if (
-      !updateInfo ||
-      typeof updateInfo !== "object" ||
-      Array.isArray(updateInfo) ||
-      Object.keys(updateInfo).length === 0
-    ) {
-      return next(getErrorObj(`Invalid request body provided!`, 400));
-    }
-
     // Flatten the updated info if provided in a nested structure
     const flattenedUpdateInfo = flattenObject(updateInfo);
 
@@ -222,7 +211,7 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     const employeeKeysSet = new Set(Employee.getKeys());
 
     // Add the isActiveAccount field manually since the getKeys() does not return isActiveAccount key
-    if (ID !== req.user.id) {
+    if (ID !== req.user.ID) {
       employeeKeysSet.add("isActiveAccount");
     }
 
@@ -239,7 +228,7 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     }
 
     // If the employee is an admin
-    if (ID !== req.user.id && employee.employeeType === "ra") {
+    if (ID !== req.user.ID && employee.employeeType === "ra") {
       return next(
         getErrorObj(`You cannot update another root admin's information`, 400)
       );
@@ -304,7 +293,7 @@ manageEmployee.deleteAnEmployee = async (req, res, next) => {
     }
 
     // If the id provide is the same as logged in admin
-    if (ID === req.user.id) {
+    if (ID === req.user.ID) {
       return next(
         getErrorObj(
           `You cannot delete your own account through this portal. Please contact your administrator`,
@@ -322,7 +311,7 @@ manageEmployee.deleteAnEmployee = async (req, res, next) => {
     }
 
     // If the ID provided is another admin's
-    if (ID !== req.user.id && employee.employeeType === "ra") {
+    if (ID !== req.user.ID && employee.employeeType === "ra") {
       return next(
         getErrorObj(`You cannot delete another admin's account`, 403)
       );

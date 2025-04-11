@@ -25,7 +25,7 @@ function accessVerify(content) {
     }
 
     // Retrieve the employee
-    const ID = req.user.id;
+    const ID = req.user.ID;
     const employee = await Employee.getEmployeeByID(ID);
     if (!employee) {
       return next(

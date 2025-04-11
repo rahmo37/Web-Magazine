@@ -13,7 +13,7 @@ roleVerify.isRootAdmin = (req, res, next) => {
   }
   if (
     req.user.role !== "employee" ||
-    !req.user.id ||
+    !req.user.ID ||
     req.user.employeeType.toLowerCase() !== "ra"
   ) {
     const err = new Error(
@@ -33,8 +33,8 @@ roleVerify.isEmployee = (req, res, next) => {
     return next(getErrorObj());
   }
   if (
-    !req.user.id ||
-    !req.user.id.startsWith("emp_") ||
+    !req.user.ID ||
+    !req.user.ID.startsWith("emp_") ||
     req.user.role !== "employee"
   ) {
     const err = new Error("You are not authorized to access this resource!");

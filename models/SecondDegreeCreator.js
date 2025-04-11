@@ -18,10 +18,29 @@ const SecondDegreeCreatorSchema = new Schema(
   { timestamps: true, collection: "secondDegreeCreator" }
 );
 
-
 // Get an employee by ID
 SecondDegreeCreatorSchema.statics.getSdcByID = async function (ID) {
   return await this.findOne({ sdcID: ID });
+};
+
+// Create a new SDC
+SecondDegreeCreatorSchema.statics.createNewSDC = async function (
+  sdcData,
+  session = null
+) {
+  const newSDC = new SecondDegreeCreator(sdcData);
+  await newSDC.save({ session });
+  return newSDC;
+};
+
+SecondDegreeCreatorSchema.statics.getKeys = function () {
+  // Excluded fields
+  const exclude = ["sdcID", "_id", "__v", "createdAt", "updatedAt"];
+  const allowedKeys = Object.keys(this.schema.paths)
+    .map((key) => key.split(".").pop())
+    .filter((key) => !exclude.includes(key));
+  const keys = [...new Set(allowedKeys)];
+  return keys;
 };
 
 const SecondDegreeCreator = mongoose.model(
