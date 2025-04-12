@@ -1,7 +1,7 @@
 // This module verifies if two objects or two arrays are equal
 const _ = require("lodash");
 
-module.exports = function (structure1, structure2, exclude = []) {
+module.exports = function (structure1 = [], structure2 = [], exclude = []) {
   // structure1 is the blueprint, structure2 is provided keys
   let providedKeys = [...structure2];
 

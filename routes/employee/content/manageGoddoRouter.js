@@ -8,6 +8,8 @@ const authenticateToken = require("../../../middlewares/jwtTokenVerify");
 const roleVerify = require("../../../middlewares/roleVerification");
 const { accessVerify } = require("../../../middlewares/verifyEmployeeAccess");
 const verifyReqBody = require("../../../middlewares/verifyReqBody");
+const { validationHandler } = require("../../../middlewares/validationHandler");
+const getRegexForID = require("../../../helpers/getRegexForID");
 
 // Request must have JWT token, must come from an employee
 manageGoddoRouter.use(
@@ -16,16 +18,37 @@ manageGoddoRouter.use(
   accessVerify("goddo")
 );
 
+//!Delete manageGoddoRouter.use((req, res, next) => {
+//!   console.log("Hi");
+//! });
+
 manageGoddoRouter
   .route("/")
   // Get all godoo
   .get(manageGoddoController.getAllGoddo)
   // Post a goddo
-  .post(verifyReqBody, manageGoddoController.postAGoddo);
+  .post(verifyReqBody, validationHandler(), manageGoddoController.postAGoddo);
+
+manageGoddoRouter
+  .route(
+    `/:subID${getRegexForID("god_sub_", 12)}/:godID${getRegexForID(
+      "god_",
+      12
+    )}(/:secID${getRegexForID("sec_", 12)})?`
+  )
+  // Update a goddo section
+  .patch(
+    verifyReqBody,
+    validationHandler(),
+    // Update a goddo section inside the main content
+    manageGoddoController.updateAGoddoSection,
+    // Update other parts of a goddo metadata/article
+    manageGoddoController.updateOtherGoddoData
+  );
 
 // Gat a goddo
 manageGoddoRouter.get(
-  "/:ID(god_[A-Za-z0-9]{12})",
+  `/:ID${getRegexForID("god_", 12)}`,
   manageGoddoController.getAGoddo
 );
 

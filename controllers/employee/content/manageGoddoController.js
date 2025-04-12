@@ -414,6 +414,56 @@ manageGoddo.postAGoddo = async function (req, res, next) {
   }
 };
 
+// Patch/Update a goddo section
+manageGoddo.updateAGoddoSection = async function (req, res, next) {
+  try {
+    // Retrieve the subcategoryID, godID, and sectionID
+    const { subID, godID, secID = null } = req.params;
+    if (!secID) {
+      return next();
+    }
+    const sectionData = req.body;
+
+    // Check the section data
+    if (
+      !structureChecker([], Object.keys(req.body), [
+        "sectionArticle",
+        "sectionImages",
+      ])
+    ) {
+      return next(
+        getErrorObj(
+          `Section information is either missing or contains invalid keys. Please review your submission and try again. The required keys are: sectionArticle and/or sectionImages`,
+          400
+        )
+      );
+    }
+
+    // Update the goddo section
+    const updatedSection = await Goddo.updateAGoddoSection(
+      subID,
+      godID,
+      secID,
+      sectionData
+    );
+
+    // Send the response with the updated section data
+    sendRequest({
+      res,
+      statusCode: 200,
+      message: "Updated section successfully",
+      data: updatedSection,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Patch/Update other parts of goddo Metadata/Article
+manageGoddo.updateOtherGoddoData = async function (req, res, next) {
+  
+};
+
 // Export the module
 module.exports = manageGoddo;
 
