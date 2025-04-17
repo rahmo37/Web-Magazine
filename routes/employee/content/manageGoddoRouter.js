@@ -6,7 +6,10 @@ const manageGoddoRouter = express.Router();
 const manageGoddoController = require("../../../controllers/employee/content/manageGoddoController");
 const authenticateToken = require("../../../middlewares/jwtTokenVerify");
 const roleVerify = require("../../../middlewares/roleVerification");
-const { accessVerify } = require("../../../middlewares/verifyEmployeeAccess");
+const {
+  routeAccessVerify,
+  modificationAccessVerify,
+} = require("../../../middlewares/verifyEmployeeAccess");
 const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
 const getRegexForID = require("../../../helpers/getRegexForID");
@@ -15,7 +18,7 @@ const getRegexForID = require("../../../helpers/getRegexForID");
 manageGoddoRouter.use(
   authenticateToken,
   roleVerify.isEmployee,
-  accessVerify("goddo")
+  routeAccessVerify("goddo")
 );
 
 //!Delete manageGoddoRouter.use((req, res, next) => {
@@ -38,13 +41,17 @@ manageGoddoRouter
   )
   // Update a goddo section
   .patch(
+    modificationAccessVerify("godID"), //! Please recheck this middleware may have bugs
     verifyReqBody,
     validationHandler(),
     // Update a goddo section inside the main content
     manageGoddoController.updateAGoddoSection,
-    // Update other parts of a goddo metadata/article
-    manageGoddoController.updateOtherGoddoData
-  );
+    // Update metadata of a goddo
+    manageGoddoController.updateAGoddoMetadata,
+    // Update article data of a goddo
+    manageGoddoController.updateAGoddoArticledata
+  )
+  .delete();
 
 // Gat a goddo
 manageGoddoRouter.get(

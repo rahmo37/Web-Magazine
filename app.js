@@ -15,6 +15,7 @@ const path = require("path");
 const bodyParse = require("body-parser");
 const requestInfo = require("./middlewares/logRequestInformation");
 const dbConfig = require("./config/db");
+const { dbMaintenance } = require("./helpers/scheduledTasks");
 const { hashPasswordInDatabase } = require("./helpers/hashPassword");
 
 // Security imports
@@ -93,11 +94,11 @@ app.use("/api/manage/employee", manageEmployeeRouter);
 app.use("/api/manage/goddo", manageGoddoRouter);
 
 // ---------------------------------Error Handlers---------------------------------
-// Not found error handler, if no routes matches this middleware is called
-app.use(routeNotFoundHandler);
-
 // Error handling middleware
 app.use(errorHandler);
+
+// Not found error handler, if no routes matches this middleware is called
+app.use(routeNotFoundHandler);
 
 // ---------------------------------Database Connection---------------------------------
 mongoose
@@ -110,8 +111,8 @@ mongoose
       console.log("App listening on port", PORT);
     });
 
-    // Hash password
-    hashPasswordInDatabase([Employee]);
+    // start database maintenance
+    dbMaintenance.start();
   })
   .catch((err) => {
     console.error("Database Connection Error:", err);

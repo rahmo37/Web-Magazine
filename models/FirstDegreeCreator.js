@@ -44,6 +44,20 @@ FirstDegreeCreatorSchema.statics.getKeys = function () {
   return keys;
 };
 
+// Delete many FDCs with fdcIDs array
+FirstDegreeCreatorSchema.statics.deleteFdcsByIDs = async function (fdcIDsArr) {
+  const result = await FirstDegreeCreator.deleteMany({
+    fdcID: { $in: fdcIDsArr },
+  });
+  return result.deletedCount;
+};
+
+// Get all the FDC IDs
+FirstDegreeCreatorSchema.statics.getIDs = async function () {
+  const result = await this.find({}, { fdcID: 1, _id: 0 });
+  return result.map((doc) => doc.fdcID);
+};
+
 const FirstDegreeCreator = mongoose.model(
   "FirstDegreeCreator",
   FirstDegreeCreatorSchema,

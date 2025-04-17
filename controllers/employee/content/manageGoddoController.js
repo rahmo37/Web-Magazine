@@ -202,7 +202,7 @@ manageGoddo.postAGoddo = async function (req, res, next) {
     let currentDate = dateAndTime.getUtcRaw();
 
     // Extract the body
-    const body = req.body;
+    const body = { ...req.body };
 
     // If fdc or content is not found in the body
     if (!body.fdc || !body.content) {
@@ -422,18 +422,22 @@ manageGoddo.updateAGoddoSection = async function (req, res, next) {
     if (!secID) {
       return next();
     }
-    const sectionData = req.body;
+    const sectionData = deepCopy(req.body);
 
     // Check the section data
     if (
-      !structureChecker([], Object.keys(req.body), [
+      !structureChecker([], Object.keys(sectionData), [
         "sectionArticle",
         "sectionImages",
       ])
     ) {
       return next(
         getErrorObj(
-          `Section information is either missing or contains invalid keys. Please review your submission and try again. The required keys are: sectionArticle and/or sectionImages`,
+          `Section information is either missing or contains invalid keys. Please review your submission and try again. The required keys are: sectionArticle and/or sectionImages. ${
+            sectionData.section
+              ? "Keys do not need to be wrapped inside a section object wrapper"
+              : ""
+          }`,
           400
         )
       );
@@ -459,9 +463,113 @@ manageGoddo.updateAGoddoSection = async function (req, res, next) {
   }
 };
 
-// Patch/Update other parts of goddo Metadata/Article
-manageGoddo.updateOtherGoddoData = async function (req, res, next) {
-  
+// Patch/Update metadata of a goddo
+manageGoddo.updateAGoddoMetadata = async function (req, res, next) {
+  try {
+    const body = deepCopy(req.body);
+
+    // Define the allowed keys
+    const allowedKey = ["article", "metadata"];
+
+    // Extract the provided keys
+    const keys = Object.keys(body);
+
+    // Exactly one valid key must be provided.
+    if (keys.length !== 1 || !allowedKey.includes(keys[0])) {
+      return next(
+        getErrorObj(
+          `Invalid request body. Please provide exactly one of these fields: article or metadata.`,
+          400
+        )
+      );
+    }
+
+    // If article is provided
+    if (keys[0] === "article") {
+      return next();
+    }
+
+    // If metadata is provided, we start its logic
+    // Extract the subID and the godID
+    const { subID, godID } = req.params;
+    const metadata = { ...body.metadata };
+
+    // Check the structure
+    const providedKeys = Object.keys(flattenObject(metadata));
+    const metadataKeys = Goddo.getMetadataKeys();
+    if (!structureChecker(metadataKeys, providedKeys)) {
+      return next(
+        getErrorObj(
+          `Metadata information provided is either missing or contains invalid keys. Please review your submission and try again. The required keys are: ${metadataKeys.join(
+            ", "
+          )}.`,
+          400
+        )
+      );
+    }
+
+    // Update the goddo metadata
+    const updatedMetadata = await Goddo.updateAGoddoMetadata(
+      subID,
+      godID,
+      metadata
+    );
+
+    // Send the response with the updated metadata
+    sendRequest({
+      res,
+      statusCode: 200,
+      message: "Updated metadata successfully",
+      data: updatedMetadata,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Patch/Update article data of a goddo
+manageGoddo.updateAGoddoArticledata = async function (req, res, next) {
+  try {
+    // Extract IDs from the request
+    const { subID, godID } = req.params;
+    const articleData = deepCopy(req.body.article);
+
+    // Check the structure
+    const providedKeys = Object.keys(flattenObject(articleData));
+    const articleKeys = Goddo.getArticleKeys();
+    const optionalFields = ["articleTrailer", "aboutArticle"];
+    if (!structureChecker(articleKeys, providedKeys, optionalFields)) {
+      return next(
+        getErrorObj(
+          `Article information provided is either missing or contains invalid keys. Please review your submission and try again. The required keys are: ${articleKeys.join(
+            ", "
+          )}, ${optionalFields.join("(Optional), ")}(Optional).${
+            providedKeys.includes("mainContent")
+              ? ` NOTE: You cannot change Main Content through this endpoint`
+              : ""
+          }`,
+          400
+        )
+      );
+    }
+
+    // Update the goddo metadata
+    const updatedArticleData = await Goddo.updateAGoddoArticle(
+      subID,
+      godID,
+      articleData
+    );
+
+    // Send the response with the updated article data
+    sendRequest({
+      res,
+      statusCode: 200,
+      message: "Updated article successfully",
+      data: updatedArticleData,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Export the module

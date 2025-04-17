@@ -1,9 +1,11 @@
 // This module verifies if an employee has the permission to perform operation on contents
 const Employee = require("../models/Employee");
 const { getErrorObj } = require("../helpers/getErrorObj");
+const getRegexForID = require("../helpers/getRegexForID");
+const Link = require("../models/Link");
 
 // This function verifies access to the content
-function accessVerify(content) {
+function routeAccessVerify(content) {
   return async function (req, res, next) {
     // Valid Departments
     const validDepartments = process.env.DEPARTMENTS.split(",");
@@ -19,7 +21,7 @@ function accessVerify(content) {
     // See if the Json Web Token is verified
     if (!req.user) {
       console.error(
-        "You must verify Json Web Token before calling 'accessVerify' middleware"
+        "You must verify Json Web Token before calling 'routeAccessVerify' middleware"
       );
       return next(getErrorObj());
     }
@@ -33,7 +35,7 @@ function accessVerify(content) {
       );
     }
 
-    // If user is a root admin
+    // If user is a root admin or a department admin
     if (
       req.user.employeeType === "ra" ||
       (req.user.employeeType === "da" && employee.department.includes("*"))
@@ -41,10 +43,13 @@ function accessVerify(content) {
       return next();
     }
 
-    // If the user is not an admin or a department admin, but the content does not exist in their department list
+    // If the user is not a root admin but the content does not exist in their department list (either regular employee or department admin)
     if (!employee.department.includes(content)) {
       return next(
-        getErrorObj("You do not have permission to perform this action!", 401)
+        getErrorObj(
+          "You do not have permission to perform any action in this department!",
+          401
+        )
       );
     }
 
@@ -53,5 +58,52 @@ function accessVerify(content) {
   };
 }
 
+function modificationAccessVerify(key, prefix) {
+  return async function (req, res, next) {
+    // Retrieve the employee
+    const loggedEmployee = await Employee.getEmployeeByID(req.user.ID);
+
+    //If no employee found
+    if (!loggedEmployee) {
+      return next(
+        getErrorObj("You do not have permission to access this portal!", 401)
+      );
+    }
+
+    // Get the contentID
+    const contentID = req.params[key];
+    // Check for link as an extra step
+    const link = await Link.getByContentID(contentID);
+    if (!link) {
+      return next(getErrorObj("No Link found for the contentID provided", 401));
+    }
+
+    // !delete console.log(loggedEmployee);
+    // If employee is a root admin or the employee is a department admin and has * or goddo as the department
+    if (
+      loggedEmployee.employeeType === "ra" ||
+      (loggedEmployee.employeeType === "da" &&
+        loggedEmployee.department.some((dep) => /^(goddo|\*)$/i.test(dep)))
+    ) {
+      return next();
+    }
+
+    // And the employeeID
+    const employeeID = loggedEmployee.employeeID;
+
+    // Get the content with the contentID and the employeeID
+    const content = await Link.getByContentIDAndEmpID(contentID, employeeID);
+    if (!content) {
+      return next(
+        getErrorObj(
+          "You do not have permission to perform any modification in this content",
+          401
+        )
+      );
+    }
+    return next();
+  };
+}
+
 // Export the module
-module.exports = { accessVerify };
+module.exports = { routeAccessVerify, modificationAccessVerify };

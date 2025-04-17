@@ -108,6 +108,44 @@ SubcategorySchema.statics.getKeys = function () {
   return keys;
 };
 
+// Get metadata keys
+SubcategorySchema.statics.getMetadataKeys = function () {
+  // Excluded fields
+  const exclude = [
+    "_id",
+    "__v",
+    "godID",
+    "contentAddedDate",
+    "createdAt",
+    "updatedAt",
+  ];
+  const allowedKeys = [...Object.keys(MetadataSchema.paths)]
+    .map((key) => key.split(".").pop())
+    .filter((key) => !exclude.includes(key));
+  const keys = [...new Set(allowedKeys)];
+  return keys;
+};
+
+// Get article keys
+SubcategorySchema.statics.getArticleKeys = function () {
+  // Excluded fields
+  const exclude = [
+    "articleTrailer",
+    "aboutArticle",
+    "mainContent",
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+  ];
+  const allowedKeys = [...Object.keys(ArticleSchema.paths)]
+    .map((key) => key.split(".").pop())
+    .filter((key) => !exclude.includes(key));
+  const keys = [...new Set(allowedKeys)];
+  return keys;
+};
+
+// Create a goddo with subcategory ID. find the subcategory and just push the goddo
 SubcategorySchema.statics.createAGoddoWithSubcategoryID = async function (
   subcategoryID,
   goddoData,
@@ -137,17 +175,23 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
   // Find the subcategory exactly matching the ids
   const goddoCategory = await this.findOne({
     subcategoryID: subID,
-    "content.metadata.godID": godID,
-    "content.article.mainContent.sectionID": secID,
+    content: {
+      $elemMatch: {
+        "metadata.godID": godID,
+        "article.mainContent.sectionID": secID,
+      },
+    },
   }).hint({
     subcategoryID: 1,
     "content.metadata.godID": 1,
     "content.article.mainContent.sectionID": 1,
   });
 
+  console.log(goddoCategory);
+
   // If the subcategory not found with the provided ids
   if (!goddoCategory) {
-    throw getErrorObj("No section found with the provided IDs", 400);
+    throw getErrorObj("No goddo section found with the provided IDs", 400);
   }
 
   // A variable that will confirm the update
@@ -169,7 +213,7 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
 
   // If updated failed
   if (!updated) {
-    throw getErrorObj("Updated was not successful", 500);
+    throw getErrorObj("Update was not successful", 500);
   }
 
   // Now save the updated goddo
@@ -177,6 +221,102 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
 
   // Return the section as plain js object
   return updatedSection.toObject();
+};
+
+SubcategorySchema.statics.updateAGoddoMetadata = async function (
+  subID,
+  godID,
+  metadata
+) {
+  let updatedMetadata = null;
+  let updated = false;
+
+  // Find the subcategories exactly matching the IDs
+  const goddoCategory = await this.findOne({
+    subcategoryID: subID,
+    content: {
+      $elemMatch: {
+        "metadata.godID": godID,
+      },
+    },
+  }).hint({
+    subcategoryID: 1,
+    "content.metadata.godID": 1,
+    "content.article.mainContent.sectionID": 1,
+  });
+
+  // If the subcategory not found with the provided ids
+  if (!goddoCategory) {
+    throw getErrorObj("No goddo found with the provided IDs", 400);
+  }
+
+  // Find and merge the metadata
+  for (let content of goddoCategory.content) {
+    if (content.metadata.godID === godID) {
+      updatedMetadata = Object.assign(content.metadata, metadata);
+      updated = true;
+    }
+  }
+
+  // If update failed
+  if (!updated) {
+    throw getErrorObj("Update was not successful", 500);
+  }
+
+  // Save the goddo
+  await goddoCategory.save();
+
+  // Return the metadata
+  return updatedMetadata.toObject();
+};
+
+SubcategorySchema.statics.updateAGoddoArticle = async function (
+  subID,
+  godID,
+  articleData
+) {
+  let updatedArticleData = null;
+  let updated = false;
+
+  // Find the subcategories exactly matching the IDs
+  const goddoCategory = await this.findOne({
+    subcategoryID: subID,
+    content: {
+      $elemMatch: {
+        "metadata.godID": godID,
+      },
+    },
+  }).hint({
+    subcategoryID: 1,
+    "content.metadata.godID": 1,
+    "content.article.mainContent.sectionID": 1,
+  });
+
+  // If the subcategory not found with the provided ids
+  if (!goddoCategory) {
+    throw getErrorObj("No goddo found with the provided IDs", 400);
+  }
+
+  // Find and merge the article data
+  for (let content of goddoCategory.content) {
+    if (content.metadata.godID === godID) {
+      updatedArticleData = Object.assign(content.article, articleData);
+      updated = true;
+    }
+  }
+
+  // If update failed
+  if (!updated) {
+    throw getErrorObj("Update was not successful", 500);
+  }
+
+  // Save the goddo
+  await goddoCategory.save();
+
+  // Return the article data, remove the main content
+  const article = updatedArticleData.toObject();
+  delete article.mainContent;
+  return article;
 };
 
 const Goddo = mongoose.model("Goddo", SubcategorySchema, "goddo");

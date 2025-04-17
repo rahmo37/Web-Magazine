@@ -4,8 +4,8 @@
   "description": "A web magazine (hemanto)",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development nodemon app.js",
-    "production": "cross-env NODE_ENV=production nodemon app.js"
+    "start": "cls && cross-env NODE_ENV=development nodemon app.js",
+    "production": "cls && cross-env NODE_ENV=production nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "luxon": "^3.5.0",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
     "xss-clean": "^0.1.4"
   }
 }

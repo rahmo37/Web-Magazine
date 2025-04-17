@@ -12,22 +12,29 @@ hashPassword.getHashedPassword = async (password) => {
 };
 
 hashPassword.hashPasswordInDatabase = async function (entityModels) {
-  // Fetching all entities
-  for (let model of entityModels) {
-    const document = await model.find({}).select("+password");
-    for (let each of document) {
-      const currentPass = each.password;
+  try {
+    if (!Array.isArray(entityModels)) {
+      throw new Error("Provided parameter must be an array");
+    }
+    // Fetching all entities
+    for (let model of entityModels) {
+      const document = await model.find({}).select("+password");
+      for (let each of document) {
+        const currentPass = each.password;
 
-      if (currentPass.length < 35) {
-        //Usually bcrypt hashed password is more than 35 characters
-        const hashed = await hashPassword.getHashedPassword(currentPass);
-        each.password = hashed;
-        await each.save();
-        console.log(`Password hashed for --> ${each.email}`);
+        if (currentPass.length < 35) {
+          //Usually bcrypt hashed password is more than 35 characters
+          const hashed = await hashPassword.getHashedPassword(currentPass);
+          each.password = hashed;
+          await each.save();
+          console.log(`Password hashed for --> ${each.email}`);
+        }
       }
     }
+    console.log("Hashing completed...");
+  } catch (error) {
+    console.log("Hashing failed...", error);
   }
-  console.log("Hashing completed...");
 };
 
 module.exports = hashPassword;

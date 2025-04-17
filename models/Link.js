@@ -45,6 +45,18 @@ LinkSchema.statics.getByContentID = async function (contentID) {
   return await this.findOne({ contentID });
 };
 
+LinkSchema.statics.getByContentIDAndEmpID = async function (
+  contentID,
+  employeeID
+) {
+  return await Link.findOne({ contentID, employeeID });
+};
+
+LinkSchema.statics.getFdcIDs = async function () {
+  const result = await this.find({}, { fdcID: 1, _id: 0 });
+  return result.map((doc) => doc.fdcID);
+};
+
 LinkSchema.statics.createLink = async function (linkData, session) {
   const newLink = new Link(linkData);
   await newLink.save({ session });
