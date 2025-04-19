@@ -44,6 +44,15 @@ const SubcategorySchema = new Schema(
   { timestamps: true, collection: "kobita" }
 );
 
+SubcategorySchema.statics.getIDs = async function () {
+  const results = await this.aggregate([
+    { $unwind: "$content" }, // Flatten 'content' array
+    { $project: { _id: 0, kobID: "$content.metadata.kobID" } }, // Extract only kobIDs
+  ]);
+
+  return results.map((item) => item.kobID); // all kobIDs in one array
+};
+
 const Kobita = mongoose.model("Kobita", SubcategorySchema, "kobita");
 
 module.exports = Kobita;

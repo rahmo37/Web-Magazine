@@ -48,8 +48,36 @@ const SubcategorySchema = new Schema(
   { timestamps: true, collection: "shongit" }
 );
 
-// Creating Model
+// Get all the ganIDs currently in the database
+SubcategorySchema.statics.getIDs = async function () {
+  // 1) grab only the parts you need
+  const roots = await this.find({}, { contents: 1, children: 1, _id: 0 });
 
+  const ganIDs = [];
+
+  // 2) define a recursive helper
+  function collect(node) {
+    // pull IDs out of this node’s contents
+    if (Array.isArray(node.contents)) {
+      node.contents.forEach((c) => {
+        if (c.metadata?.ganID) {
+          ganIDs.push(c.metadata.ganID);
+        }
+      });
+    }
+    // Then dive into each child
+    if (Array.isArray(node.children)) {
+      node.children.forEach((child) => collect(child));
+    }
+  }
+
+  // 3) start from each root
+  roots.forEach((eachRoot) => collect(eachRoot));
+
+  return ganIDs;
+};
+
+// Creating Model
 const Shongit = mongoose.model("Shongit", SubcategorySchema, "shongit");
 
 module.exports = Shongit;

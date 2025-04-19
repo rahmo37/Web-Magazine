@@ -52,9 +52,10 @@ LinkSchema.statics.getByContentIDAndEmpID = async function (
   return await Link.findOne({ contentID, employeeID });
 };
 
-LinkSchema.statics.getFdcIDs = async function () {
-  const result = await this.find({}, { fdcID: 1, _id: 0 });
-  return result.map((doc) => doc.fdcID);
+LinkSchema.statics.getEntityIDs = async function (entityID) {
+  const projection = { [entityID]: 1, _id: 0 };
+  const result = await this.find({}, projection);
+  return result.map((doc) => doc[entityID]).filter(Boolean);
 };
 
 LinkSchema.statics.createLink = async function (linkData, session) {

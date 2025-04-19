@@ -33,6 +33,7 @@ SecondDegreeCreatorSchema.statics.createNewSDC = async function (
   return newSDC;
 };
 
+// Get the SDC model keys
 SecondDegreeCreatorSchema.statics.getKeys = function () {
   // Excluded fields
   const exclude = ["sdcID", "_id", "__v", "createdAt", "updatedAt"];
@@ -41,6 +42,20 @@ SecondDegreeCreatorSchema.statics.getKeys = function () {
     .filter((key) => !exclude.includes(key));
   const keys = [...new Set(allowedKeys)];
   return keys;
+};
+
+// Delete many SDCs with sdcIDs array
+SecondDegreeCreatorSchema.statics.deleteByIDs = async function (sdcIDsArr) {
+  const result = await SecondDegreeCreator.deleteMany({
+    sdcID: { $in: sdcIDsArr },
+  });
+  return result.deletedCount;
+};
+
+// Get all the SDC IDs
+SecondDegreeCreatorSchema.statics.getIDs = async function () {
+  const result = await this.find({}, { sdcID: 1, _id: 0 });
+  return result.map((doc) => doc.sdcID);
 };
 
 const SecondDegreeCreator = mongoose.model(

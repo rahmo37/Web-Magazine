@@ -1,4 +1,4 @@
-// This file checks for FDCs without any associated links and deletes them.
+// This file checks for creators without any associated links and deletes them.
 const FirstDegreeCreator = require("../models/FirstDegreeCreator");
 const Link = require("../models/Link");
 const structureChecker = require("./structureChecker");
@@ -6,28 +6,33 @@ const structureChecker = require("./structureChecker");
 // Module Scaffolding
 const orphanedCreator = {};
 
-orphanedCreator.trimFdcs = async function () {
+// This function trims the orphaned creators
+orphanedCreator.trimCreator = async function (entity) {
   try {
-    const currentFdcIDs = await FirstDegreeCreator.getIDs();
-    const linkFdcIDs = await Link.getFdcIDs();
+    const entityIDKeyName =
+      entity.modelName === "FirstDegreeCreator" ? "fdcID" : "sdcID";
+    const currentEntityIDs = await entity.getIDs();
+    const linkEntityIDs = await Link.getEntityIDs(entityIDKeyName);
+    console.log(currentEntityIDs, linkEntityIDs);
 
-    if (!structureChecker(linkFdcIDs, currentFdcIDs)) {
-      const FdcIDSet = new Set(linkFdcIDs);
-      const extraIDsArr = currentFdcIDs.filter((ID) => !FdcIDSet.has(ID));
+    if (!structureChecker(linkEntityIDs, currentEntityIDs)) {
+      const entityIDSet = new Set(linkEntityIDs);
+      const extraIDsArr = currentEntityIDs.filter((ID) => !entityIDSet.has(ID));
 
       if (extraIDsArr.length > 0) {
-        const deleteCount = await FirstDegreeCreator.deleteFdcsByIDs(
-          extraIDsArr
-        );
-        console.log("Orphaned FDC(s) deleted", { deleteCount, extraIDsArr });
+        const deleteCount = await entity.deleteByIDs(extraIDsArr);
+        console.log(`Orphaned ${entity.modelName}(s) deleted`, {
+          deleteCount,
+          extraIDsArr,
+        });
       } else {
-        console.log("No orphaned FDC(s) to delete");
+        console.log(`No orphaned ${entity.modelName}(s) to delete`);
       }
     } else {
-      console.log("No orphaned FDC(s) found");
+      console.log(`No orphaned ${entity.modelName}(s) found`);
     }
   } catch (error) {
-    console.error("Error trimming orphaned FDC(s):", error);
+    console.error(`Error trimming orphaned ${entity.modelName}(s):`, error);
   }
 };
 

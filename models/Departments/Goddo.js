@@ -164,6 +164,7 @@ SubcategorySchema.statics.createAGoddoWithSubcategoryID = async function (
   return subcategory;
 };
 
+// Update a goddo's section data
 SubcategorySchema.statics.updateAGoddoSection = async function (
   subID,
   godID,
@@ -223,6 +224,7 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
   return updatedSection.toObject();
 };
 
+// Updated a goddo's metadata
 SubcategorySchema.statics.updateAGoddoMetadata = async function (
   subID,
   godID,
@@ -270,6 +272,7 @@ SubcategorySchema.statics.updateAGoddoMetadata = async function (
   return updatedMetadata.toObject();
 };
 
+// Updated a goddo's article
 SubcategorySchema.statics.updateAGoddoArticle = async function (
   subID,
   godID,
@@ -319,6 +322,17 @@ SubcategorySchema.statics.updateAGoddoArticle = async function (
   return article;
 };
 
+SubcategorySchema.statics.getIDs = async function () {
+  const results = await this.aggregate([
+    { $unwind: "$content" }, // Flatten 'content' array
+    { $project: { _id: 0, godID: "$content.metadata.godID" } }, // Extract only godIDs
+  ]);
+
+  return results.map((item) => item.godID); // all godIDs in one array
+};
+
+// Create the model
 const Goddo = mongoose.model("Goddo", SubcategorySchema, "goddo");
 
+// Finally export
 module.exports = Goddo;

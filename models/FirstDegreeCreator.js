@@ -45,7 +45,7 @@ FirstDegreeCreatorSchema.statics.getKeys = function () {
 };
 
 // Delete many FDCs with fdcIDs array
-FirstDegreeCreatorSchema.statics.deleteFdcsByIDs = async function (fdcIDsArr) {
+FirstDegreeCreatorSchema.statics.deleteByIDs = async function (fdcIDsArr) {
   const result = await FirstDegreeCreator.deleteMany({
     fdcID: { $in: fdcIDsArr },
   });
