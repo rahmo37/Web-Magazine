@@ -1,6 +1,6 @@
 // Importing necessary modules
 const path = require("path");
-const envPath = path.join(__dirname, "../../../.env");
+const envPath = path.join(__dirname, "../../../.env.development");
 require("dotenv").config({ path: envPath });
 const mongoose = require("mongoose");
 const fs = require("fs");
