@@ -41,8 +41,11 @@ manageGoddoRouter
   )
   // Update a goddo section
   .patch(
+    // Check if the logged in user has modification permission
     modificationAccessVerify("godID"), //! Please recheck this middleware may have bugs
+    // Verify if the body is invalid
     verifyReqBody,
+    // Validate the request body fields
     validationHandler(),
     // Update a goddo section inside the main content
     manageGoddoController.updateAGoddoSection,
@@ -51,7 +54,14 @@ manageGoddoRouter
     // Update article data of a goddo
     manageGoddoController.updateAGoddoArticledata
   )
-  .delete();
+  .delete(
+    // Check if the logged in user has modification permission
+    modificationAccessVerify("godID"),
+    // Delete a goddo section
+    manageGoddoController.deleteAGoddoSection,
+    // Delete an entire goddo
+    manageGoddoController.deleteAGoddo
+  );
 
 // Gat a goddo
 manageGoddoRouter.get(

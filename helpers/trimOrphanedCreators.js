@@ -1,5 +1,4 @@
 // This file checks for creators without any associated links and deletes them.
-const FirstDegreeCreator = require("../models/FirstDegreeCreator");
 const Link = require("../models/Link");
 const structureChecker = require("./structureChecker");
 
@@ -11,9 +10,10 @@ orphanedCreator.trimCreator = async function (entity) {
   try {
     const entityIDKeyName =
       entity.modelName === "FirstDegreeCreator" ? "fdcID" : "sdcID";
-    const currentEntityIDs = await entity.getIDs();
-    const linkEntityIDs = await Link.getEntityIDs(entityIDKeyName);
-    console.log(currentEntityIDs, linkEntityIDs);
+    const currentEntityIDs = [...new Set(await entity.getIDs())];
+    const linkEntityIDs = [
+      ...new Set(await Link.getEntityIDs(entityIDKeyName)),
+    ];
 
     if (!structureChecker(linkEntityIDs, currentEntityIDs)) {
       const entityIDSet = new Set(linkEntityIDs);
@@ -26,7 +26,9 @@ orphanedCreator.trimCreator = async function (entity) {
           extraIDsArr,
         });
       } else {
-        console.log(`No orphaned ${entity.modelName}(s) to delete`);
+        console.log(
+          `No orphaned ${entity.modelName}(s) to delete. However the structure did not match with the Link collection please reconcile the Link entity promptly`
+        );
       }
     } else {
       console.log(`No orphaned ${entity.modelName}(s) found`);

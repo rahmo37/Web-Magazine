@@ -111,7 +111,8 @@ mongoose
       console.log("App listening on port", PORT);
     });
 
-    // start database maintenance
+    // Start database maintenance
+    console.log("⏰ Starting daily maintenance schedule");
     dbMaintenance.start();
   })
   .catch((err) => {

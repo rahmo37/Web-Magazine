@@ -173,7 +173,7 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
 ) {
   let updatedSection = null;
 
-  // Find the subcategory exactly matching the ids
+  // Find the subcategory exactly matching the IDs
   const goddoCategory = await this.findOne({
     subcategoryID: subID,
     content: {
@@ -188,9 +188,7 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
     "content.article.mainContent.sectionID": 1,
   });
 
-  console.log(goddoCategory);
-
-  // If the subcategory not found with the provided ids
+  // If the subcategory not found with the provided IDs
   if (!goddoCategory) {
     throw getErrorObj("No goddo section found with the provided IDs", 400);
   }
@@ -320,6 +318,114 @@ SubcategorySchema.statics.updateAGoddoArticle = async function (
   const article = updatedArticleData.toObject();
   delete article.mainContent;
   return article;
+};
+
+SubcategorySchema.statics.deleteAGoddoSection = async function (
+  subID,
+  godID,
+  secID
+) {
+  let deleted = false;
+  let currentMainContentArr = [];
+
+  // Find the subcategory exactly matching the IDs
+  const goddoCategory = await this.findOne({
+    subcategoryID: subID,
+    content: {
+      $elemMatch: {
+        "metadata.godID": godID,
+        "article.mainContent.sectionID": secID,
+      },
+    },
+  }).hint({
+    subcategoryID: 1,
+    "content.metadata.godID": 1,
+    "content.article.mainContent.sectionID": 1,
+  });
+
+  // If the subcategory not found with the provided IDs
+  if (!goddoCategory) {
+    throw getErrorObj("No goddo section found with the provided IDs", 400);
+  }
+
+  // Find the subcategory and then delete the section
+  for (const content of goddoCategory.content) {
+    if (content.metadata.godID === godID) {
+      if (content.article.mainContent.length === 1) {
+        throw new Error(
+          "This is the last section of this Goddo and cannot be deleted. You can update this section or delete the entire Goddo if necessary"
+        );
+      }
+      for (let section of content.article.mainContent) {
+        if (section.sectionID === secID) {
+          content.article.mainContent = content.article.mainContent.filter(
+            (section) => section.sectionID !== secID
+          );
+          deleted = true;
+          currentMainContentArr = content.article.mainContent;
+        }
+      }
+    }
+  }
+
+  // Save the goddo
+  await goddoCategory.save();
+
+  // Return the current MainContent Array
+  return currentMainContentArr;
+};
+
+// Delete many Goddos with godIDs array
+SubcategorySchema.statics.deleteByIDs = async function (goddoIDs) {
+  if (!Array.isArray(goddoIDs) || goddoIDs.length === 0) {
+    throw new Error("You must provide a non‑empty array of goddoIDs");
+  }
+
+  // Pull any content sub‑document whose metadata.godID is in the provided array
+  const result = await this.updateMany(
+    {},
+    {
+      $pull: {
+        content: { "metadata.godID": { $in: goddoIDs } },
+      },
+    }
+  );
+
+  return result;
+};
+
+// Delete a goddo with a provided subID and godID
+SubcategorySchema.statics.deleteAGoddoByID = async function (
+  subID,
+  godID,
+  session = null
+) {
+  const res = await this.updateOne(
+    // only match docs where both IDs line up
+    {
+      subcategoryID: subID,
+      "content.metadata.godID": godID,
+    },
+    // remove that exact element
+    { $pull: { content: { "metadata.godID": godID } } },
+    { session }
+  );
+
+  // If no doc matched, either the subcategory is wrong or the goddo isn't inside it
+  if (res.matchedCount === 0) {
+    throw getErrorObj(`No goddo found with the IDs provided`, 400);
+  }
+
+  // matchedCount > 0 guarantees modifiedCount will be 1 here,
+  // but you can sanity‑check if you like:
+  if (res.modifiedCount === 0) {
+    throw getErrorObj(
+      `Failed to remove goddo "${godID}" from subcategory "${subID}"`,
+      500
+    );
+  }
+
+  return true;
 };
 
 SubcategorySchema.statics.getIDs = async function () {

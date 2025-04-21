@@ -361,7 +361,6 @@ manageGoddo.postAGoddo = async function (req, res, next) {
           )
         );
       }
-
       // Add the sectionImages property if does not exists already
       if (!eachSec.sectionImages) {
         eachSec.sectionImages = [];
@@ -569,6 +568,72 @@ manageGoddo.updateAGoddoArticledata = async function (req, res, next) {
     });
   } catch (error) {
     next(error);
+  }
+};
+
+// Delete a goddo section
+manageGoddo.deleteAGoddoSection = async function (req, res, next) {
+  try {
+    // Retrieve the subcategoryID, godID, and sectionID
+    const { subID, godID, secID = null } = req.params;
+
+    // If no section is provided we call the next middleware
+    if (!secID) {
+      return next();
+    }
+
+    // If secID is provided we delete the section
+    const currentMainContentArray = await Goddo.deleteAGoddoSection(
+      subID,
+      godID,
+      secID
+    );
+
+    // Send the response with the updated article data
+    sendRequest({
+      res,
+      statusCode: 200,
+      message: "Deleted section successfully",
+      data: currentMainContentArray,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete a goddo
+manageGoddo.deleteAGoddo = async function (req, res, next) {
+  let isDeletedGoddo = false;
+  let isDeletedLink = false;
+
+  // Start a new session
+  const session = await mongoose.startSession();
+  try {
+    // Retrieve the subcategoryID, godID
+    const { subID, godID } = req.params;
+
+    await session.withTransaction(async () => {
+      // Now we delete the goddo as part of a session
+      isDeletedGoddo = await Goddo.deleteAGoddoByID(subID, godID, session);
+
+      // Now we delete the link as part of a session
+      isDeletedLink = await Link.deleteByContentID(godID, session);
+    });
+
+    if (isDeletedGoddo && isDeletedLink) {
+      // Send the response with the updated article data
+      sendRequest({
+        res,
+        statusCode: 200,
+        message: "Goddo deleted successfully",
+      });
+    } else {
+      throw getErrorObj();
+    }
+  } catch (error) {
+    next(error);
+  } finally {
+    session.endSession();
   }
 };
 

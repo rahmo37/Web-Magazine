@@ -77,6 +77,64 @@ SubcategorySchema.statics.getIDs = async function () {
   return ganIDs;
 };
 
+// Delete many Shongits with ganIDs array
+SubcategorySchema.statics.deleteByIDs = async function (ganIDs) {
+  if (!Array.isArray(ganIDs) || ganIDs.length === 0) {
+    throw new Error("You must provide a non‑empty array of ganIDs");
+  }
+
+  // Fetch all subcategories
+  const docs = await this.find().exec();
+  let totalRemoved = 0,
+    docsModified = 0;
+
+  for (const doc of docs) {
+    let docChanged = false;
+
+    // 1️⃣ Remove from top‑level contents
+    const beforeRoot = doc.contents.length;
+    doc.contents = doc.contents.filter(
+      (c) => !ganIDs.includes(c.metadata.ganID)
+    );
+    const removedHere = beforeRoot - doc.contents.length;
+    if (removedHere > 0) {
+      totalRemoved += removedHere;
+      doc.markModified("contents");
+      docChanged = true;
+    }
+
+    // 2️⃣ Recursively strip from any children
+    function stripChildren(nodeArray) {
+      if (!Array.isArray(nodeArray)) return;
+      for (const sub of nodeArray) {
+        const beforeSub = sub.contents.length;
+        sub.contents = sub.contents.filter(
+          (c) => !ganIDs.includes(c.metadata.ganID)
+        );
+        const removedSub = beforeSub - sub.contents.length;
+        if (removedSub > 0) {
+          totalRemoved += removedSub;
+          docChanged = true;
+        }
+        // dive deeper
+        stripChildren(sub.children);
+      }
+    }
+    stripChildren(doc.children);
+
+    // 3️⃣ If anything changed, mark and save
+    if (docChanged) {
+      // because we mutated nested paths, let Mongoose know:
+      doc.markModified("children");
+      console.log();
+      await doc.save();
+      docsModified++;
+    }
+  }
+
+  return { docsModified, totalRemoved };
+};
+
 // Creating Model
 const Shongit = mongoose.model("Shongit", SubcategorySchema, "shongit");
 

@@ -64,6 +64,25 @@ LinkSchema.statics.createLink = async function (linkData, session) {
   return newLink;
 };
 
+LinkSchema.statics.deleteByContentID = async function (
+  contentID,
+  session = null
+) {
+  // build the delete query
+  let query = this.deleteOne({ contentID });
+
+  // if a session was provided, attach it
+  if (session) {
+    query = query.session(session);
+  }
+
+  const result = await query;
+  if (result.deletedCount === 0) {
+    throw new Error(`No link found with contentID "${contentID}"`);
+  }
+  return true;
+};
+
 const Link = mongoose.model("Link", LinkSchema, "link");
 
 module.exports = Link;
