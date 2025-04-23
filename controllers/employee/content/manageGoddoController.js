@@ -331,7 +331,7 @@ manageGoddo.postAGoddo = async function (req, res, next) {
         getErrorObj(
           `Content information is either missing or contains invalid keys. Please review your submission and try again. The required keys are: ${contentKeys.join(
             ", "
-          )} ${optionalKeys.join("(optional), ")}(optional).`,
+          )}, ${optionalKeys.join("(optional), ")}(optional).`,
           400
         )
       );

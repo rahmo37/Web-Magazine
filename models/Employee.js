@@ -31,6 +31,7 @@ const EmployeeSchema = new Schema(
     accountCreated: { type: Date, required: true },
     isActiveAccount: { type: Boolean, default: true, required: true },
     lastLogin: { type: Date, default: null },
+    deniedDepartment: { type: [String], required: true, default: [] },
     employeeBio: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
@@ -40,11 +41,6 @@ const EmployeeSchema = new Schema(
   },
   { collection: "employee" }
 );
-
-/**
- * The first method returns the employee document without the password,
- * while the second returns the employee document with the password included.
- */
 
 // Employee validation field
 EmployeeSchema.statics.getKeys = function () {
@@ -85,6 +81,11 @@ EmployeeSchema.statics.getEmployeeByEmail = async function (email) {
 EmployeeSchema.statics.getEmployeeByPhone = async function (phone) {
   return await this.findOne({ phone });
 };
+
+/**
+ * The first method returns the employee document without the password,
+ * while the second returns the employee document with the password included.
+ */
 
 // Get an employee by ID
 EmployeeSchema.statics.getEmployeeByID = async function (ID) {

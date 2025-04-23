@@ -333,7 +333,8 @@ validator.department = function (department) {
     return { valid: false, error: numberErrors(errors) };
   }
 
-  if (department.length === 0) {tut_123456
+  if (department.length === 0) {
+    tut_123456;
     errors.push("Department array must contain at least one element.");
   }
 
@@ -488,36 +489,159 @@ validator.creatorName = function (name) {
 
 //! --------------------creatorBio
 /**
- * Validates the creator's Bangla bio:
- *  - The bio must not be empty.
- *  - The bio must be at least 50 characters and no more than 3000 characters.
- *  - The bio must contain at least one Bengali character (while other symbols, including English words, are allowed).
+ * Factory for validating a Bangla text field:
+ *  - Must not be empty.
+ *  - Must be at least `min` characters and no more than `max` characters.
+ *  - Must contain at least one Bengali character (other letters, digits, punctuation allowed).
  */
-validator.creatorBio = function (bio) {
+//? Generic helper for bangla text validator
+function makeBanglaTextValidator(fieldLabel, { min = 1, max = Infinity } = {}) {
+  const banglaRegex = /^(?=.*[\u0980-\u09FF])[\s\S]+$/;
+
+  return function (text) {
+    const errors = [];
+
+    // 1. non‑empty
+    if (!text || text.trim().length === 0) {
+      errors.push(`${fieldLabel} cannot be empty.`);
+      return { valid: false, error: numberErrors(errors) };
+    }
+
+    const trimmed = text.trim();
+
+    // 2. min length
+    if (trimmed.length < min) {
+      errors.push(`${fieldLabel} must be at least ${min} characters long.`);
+    }
+
+    // 3. max length
+    if (trimmed.length > max) {
+      errors.push(`${fieldLabel} must be no more than ${max} characters long.`);
+    }
+
+    // 4. require at least one Bangla character
+    if (!banglaRegex.test(trimmed)) {
+      errors.push(
+        `${fieldLabel} must include at least one Bengali character (English words are allowed).`
+      );
+    }
+
+    return {
+      valid: errors.length === 0,
+      error: numberErrors(errors),
+    };
+  };
+}
+
+// 2) Min-Max boundary for each field
+const bioOpts = { min: 50, max: 2000 };
+const nameOpts = { min: 5, max: 300 };
+const trailerOpts = { min: 25, max: 500 };
+const aboutOpts = { min: 20, max: 2000 };
+const sectionOpts = { min: 30, max: 2000 };
+
+//! --------------------creatorBio
+validator.creatorBio = makeBanglaTextValidator("Creator bio", bioOpts);
+
+//! --------------------articleName
+validator.articleName = makeBanglaTextValidator("Article name", nameOpts);
+
+//! --------------------articleTrailer
+validator.articleTrailer = makeBanglaTextValidator(
+  "Article trailer",
+  trailerOpts
+);
+
+//! --------------------aboutArticle
+validator.aboutArticle = makeBanglaTextValidator("About article", aboutOpts);
+
+//! --------------------sectionArticle
+validator.sectionArticle = makeBanglaTextValidator(
+  "Section article",
+  sectionOpts
+);
+
+//? Generic helper for image check
+/**
+ * Validates the article cover string:
+ *  - Must be provided as a non-empty string.
+ *  - Must contain exactly one dot, which separates the filename from the extension.
+ *  - The file extension must be one of the allowed types: jpg, jpeg, png, gif, or webp.
+ */
+function validateImageString(imageStr) {
+  const errors = [];
+  const allowedTypes = ["jpg", "jpeg", "png", "gif", "webp"];
+
+  if (typeof imageStr !== "string" || !imageStr.trim()) {
+    errors.push("Image string must be a non-empty string.");
+  } else {
+    const parts = imageStr.split(".");
+    if (parts.length !== 2) {
+      errors.push(
+        "Image string must contain exactly one dot separating filename and extension."
+      );
+    } else {
+      const ext = parts.pop().toLowerCase();
+      if (!allowedTypes.includes(ext)) {
+        errors.push(`Image type must be one of: ${allowedTypes.join(", ")}.`);
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    error: numberErrors(errors),
+  };
+}
+
+//! --------------------creatorImage
+validator.creatorImage = validateImageString;
+
+//! --------------------articleCover
+validator.articleCover = validateImageString;
+
+//! --------------------originalWritingDate
+/**
+ * Validates the "originalWritingDate" value:
+ *  - It must be provided as a non-empty string.
+ *  - It must follow the format YYYY-MM-DD.
+ *  - It must represent a valid date (i.e. no auto-correction issues).
+ *  - It must not be a future date.
+ */
+validator.originalWritingDate = function (originalWritingDate) {
   const errors = [];
 
-  // Ensure the bio is not empty
-  if (!bio || bio.trim().length === 0) {
-    errors.push("Bangla bio cannot be empty.");
+  if (!originalWritingDate || typeof originalWritingDate !== "string") {
+    errors.push(
+      "originalWritingDate must be provided as a non-empty string in YYYY-MM-DD format."
+    );
     return { valid: false, error: numberErrors(errors) };
   }
 
-  const trimmedBio = bio.trim();
-
-  // Length validations
-  if (trimmedBio.length < 50) {
-    errors.push("Bangla bio must be at least 50 characters long.");
-  }
-  if (trimmedBio.length > 3000) {
-    errors.push("Bangla bio must be no more than 3000 characters long.");
+  // Validate the format YYYY-MM-DD
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(originalWritingDate)) {
+    errors.push("originalWritingDate must be in the format YYYY-MM-DD.");
+    return { valid: false, error: numberErrors(errors) };
   }
 
-  // Regex to allow any characters but require at least one Bengali letter
-  const banglaBioRegex = /^(?=.*[\u0980-\u09FF])[\s\S]+$/;
-  if (!banglaBioRegex.test(trimmedBio)) {
+  const today = new Date();
+  const [year, month, day] = originalWritingDate.split("-").map(Number);
+  const newOriginalWritingDate = new Date(year, month - 1, day);
+
+  // Check for auto-correction issues by comparing the parsed values
+  if (
+    newOriginalWritingDate.getFullYear() !== year ||
+    newOriginalWritingDate.getMonth() + 1 !== month ||
+    newOriginalWritingDate.getDate() !== day
+  ) {
     errors.push(
-      "Bangla bio must include at least one Bengali character (English words are allowed)."
+      "Invalid date provided. Please ensure the date is correct and exists on the calendar."
     );
+  }
+
+  if (newOriginalWritingDate > today) {
+    errors.push("originalWritingDate cannot be in the future.");
   }
 
   return {
@@ -526,38 +650,20 @@ validator.creatorBio = function (bio) {
   };
 };
 
-//! --------------------creatorImage
-/**
- * Validates the creator image string:
- *  - Must be provided as a non-empty string.
- *  - Must contain exactly one dot, which separates the filename from the extension.
- *  - The file extension must be one of the allowed types: jpg, jpeg, png, gif, or webp.
- */
-validator.creatorImage = function (imageStr) {
+//! --------------------sectionImages
+validator.sectionImages = function (images) {
   const errors = [];
-  const allowedTypes = ["jpg", "jpeg", "png", "gif", "webp"];
 
-  // Check that imageStr is a non-empty string.
-  if (typeof imageStr !== "string" || !imageStr.trim()) {
-    errors.push("Image string must be a non-empty string.");
+  if (!Array.isArray(images) || images.length === 0) {
+    errors.push("sectionImages must be a non-empty array of image filenames.");
   } else {
-    // Split the string by the dot.
-    const parts = imageStr.split(".");
-
-    // The image string should contain exactly one dot (two parts)
-    if (parts.length !== 2) {
-      errors.push(
-        "Image string must contain exactly one dot separating the filename and extension."
-      );
-    } else {
-      // Extract and validate the extension.
-      const ext = parts.pop().toLowerCase();
-      if (!allowedTypes.includes(ext)) {
-        errors.push(
-          `Image type must be one of the following: ${allowedTypes.join(", ")}.`
-        );
+    images.forEach((img, idx) => {
+      const { valid, error } = validateImageString(img);
+      if (!valid) {
+        // prefix each element’s errors with its index
+        errors.push(`Image at index ${idx}: ${error}`);
       }
-    }
+    });
   }
 
   return {

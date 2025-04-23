@@ -45,6 +45,7 @@ LinkSchema.statics.getByContentID = async function (contentID) {
   return await this.findOne({ contentID });
 };
 
+// Return the content if both the contentID and the EmployeeID exists in a Link
 LinkSchema.statics.getByContentIDAndEmpID = async function (
   contentID,
   employeeID

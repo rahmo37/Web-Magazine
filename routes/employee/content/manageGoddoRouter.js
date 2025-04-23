@@ -9,6 +9,7 @@ const roleVerify = require("../../../middlewares/roleVerification");
 const {
   routeAccessVerify,
   modificationAccessVerify,
+  explicitDenyVerify,
 } = require("../../../middlewares/verifyEmployeeAccess");
 const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
@@ -30,7 +31,16 @@ manageGoddoRouter
   // Get all godoo
   .get(manageGoddoController.getAllGoddo)
   // Post a goddo
-  .post(verifyReqBody, validationHandler(), manageGoddoController.postAGoddo);
+  .post(
+    // See if the employee is explicitly denied to post any content
+    explicitDenyVerify("goddo"),
+    // Verify the request body
+    verifyReqBody,
+    // Validate the posted fields
+    validationHandler(),
+    // Post goddo controller
+    manageGoddoController.postAGoddo
+  );
 
 manageGoddoRouter
   .route(
@@ -39,7 +49,7 @@ manageGoddoRouter
       12
     )}(/:secID${getRegexForID("sec_", 12)})?`
   )
-  // Update a goddo section
+  // Update a goddo section, metadata or article
   .patch(
     // Check if the logged in user has modification permission
     modificationAccessVerify("godID"), //! Please recheck this middleware may have bugs
