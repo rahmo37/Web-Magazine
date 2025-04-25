@@ -10,7 +10,7 @@ const {
   routeAccessVerify,
   modificationAccessVerify,
   explicitDenyVerify,
-} = require("../../../middlewares/verifyEmployeeAccess");
+} = require("../../../middlewares/verifyEmployeeAccessOnDepartments");
 const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
 const getRegexForID = require("../../../helpers/getRegexForID");

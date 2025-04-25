@@ -1,0 +1,14 @@
+* Create FDC and SDC Endpoints
+* Gel All FDC and SDC
+* Get an FDC and SDC by ID,
+* Delete an FDC and SDC by ID, if there are existing links to the FDC and SDC that is being deleted, the corresponding IDs should be replaced with hemanto desk ID
+* Update an FDC and SDC by ID
+
+* Then start working with Shongit
+
+
+Think about how the contents will be accessed by the users.
+* All contents at once
+* By category
+* By subcategory
+* By single content (Maybe with some similar content suggestions)

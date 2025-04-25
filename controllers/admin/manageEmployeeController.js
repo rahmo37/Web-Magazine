@@ -94,6 +94,7 @@ manageEmployee.addEmployee = async (req, res, next) => {
       dateJoined,
       employeeType,
       department,
+      deniedDepartment,
       firstName,
       lastName,
       gender,
@@ -129,10 +130,14 @@ manageEmployee.addEmployee = async (req, res, next) => {
     // If root admin provide full content access
     if (employeeType === "ra") {
       department = ["*"];
+      deniedDepartment = [];
     }
 
     // Make each dept name lowercase
     department = department.map((dept) => dept.toLowerCase());
+
+    // Make each deniedDept name lower case
+    deniedDepartment = deniedDepartment.map((dept) => dept.toLowerCase());
 
     // Creating new employee with values
     const newEmployeeObject = {
@@ -142,6 +147,7 @@ manageEmployee.addEmployee = async (req, res, next) => {
       dateJoined,
       employeeType,
       department,
+      deniedDepartment,
       employeeBio: { firstName, lastName, gender, dateOfBirth },
     };
 
@@ -241,12 +247,13 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
       );
     }
 
-    // If the employee is promoted to root admin, then change the department to *
+    // If the employee is promoted to root admin, then change the department to * and deniedDepartment to []
     if (
       flattenedUpdateInfo.employeeType &&
       flattenedUpdateInfo.employeeType === "ra"
     ) {
       flattenedUpdateInfo.department = ["*"];
+      flattenedUpdateInfo.deniedDepartment = [];
     }
 
     // if department is being updated ensure all the names are in lowercase
@@ -254,6 +261,12 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
       flattenedUpdateInfo.department = flattenedUpdateInfo.department.map(
         (dept) => dept.toLowerCase()
       );
+    }
+
+    // if denied department is being updated ensure all the names are in lowercase
+    if (flattenedUpdateInfo.deniedDepartment) {
+      flattenedUpdateInfo.deniedDepartment =
+        flattenedUpdateInfo.deniedDepartment.map((dept) => dept.toLowerCase());
     }
 
     // Update the employee

@@ -151,7 +151,6 @@ function explicitDenyVerify(department) {
         )
       );
     }
-
     next();
   };
 }

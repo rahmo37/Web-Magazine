@@ -1,6 +1,7 @@
 // This middleware verifies user's role (Admin, Employee). Before calling this middleware JWT token must be verified
 
 // Object to accumulate functions
+
 const roleVerify = {};
 const { getErrorObj } = require("../helpers/getErrorObj");
 

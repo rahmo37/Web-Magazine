@@ -63,14 +63,14 @@ async function allMaintenanceFunctions() {
   }
 }
 
-// Immediately run one maintenance pass, then start the daily schedule
-(async () => {
-  await allMaintenanceFunctions();
-  console.log(
-    "🚀 Initial maintenance completed at",
-    dateAndTime.getLocalFormatted()
-  );
-})();
+// Immediately run one maintenance upon server start up
+// (async () => {
+//   await allMaintenanceFunctions();
+//   console.log(
+//     "🚀 Initial maintenance completed at",
+//     dateAndTime.getLocalFormatted()
+//   );
+// })();
 
 // Gracefully stop cron on exit
 process.on("SIGINT", () => {

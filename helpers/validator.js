@@ -3,7 +3,7 @@
 // Importing necessary modules
 const { parsePhoneNumberFromString } = require("libphonenumber-js");
 
-// Helper function to number error messages
+//* Helper functions
 function numberErrors(errors) {
   return errors.map((err, index) => `${index + 1}. ${err}`);
 }
@@ -18,6 +18,86 @@ function isEnglishName(text) {
   const englishNameRegex = /^[A-Za-z]+(?:[ '-][A-Za-z]+)*$/;
   return englishNameRegex.test(text);
 }
+
+/**
+ * Factory for validating a Bangla text field:
+ *  - Must not be empty.
+ *  - Must be at least `min` characters and no more than `max` characters.
+ *  - Must contain at least one Bengali character (other letters, digits, punctuation allowed).
+ */
+//? Generic helper for bangla text validator
+function makeBanglaTextValidator(fieldLabel, { min = 1, max = Infinity } = {}) {
+  const banglaRegex = /^(?=.*[\u0980-\u09FF])[\s\S]+$/;
+
+  return function (text) {
+    const errors = [];
+
+    // 1. non‑empty
+    if (!text || text.trim().length === 0) {
+      errors.push(`${fieldLabel} cannot be empty.`);
+      return { valid: false, error: numberErrors(errors) };
+    }
+
+    const trimmed = text.trim();
+
+    // 2. min length
+    if (trimmed.length < min) {
+      errors.push(`${fieldLabel} must be at least ${min} characters long.`);
+    }
+
+    // 3. max length
+    if (trimmed.length > max) {
+      errors.push(`${fieldLabel} must be no more than ${max} characters long.`);
+    }
+
+    // 4. require at least one Bangla character
+    if (!banglaRegex.test(trimmed)) {
+      errors.push(
+        `${fieldLabel} must include at least one Bengali character (English words are allowed).`
+      );
+    }
+
+    return {
+      valid: errors.length === 0,
+      error: numberErrors(errors),
+    };
+  };
+}
+
+//? Generic helper for image check
+/**
+ * Validates the article cover string:
+ *  - Must be provided as a non-empty string.
+ *  - Must contain exactly one dot, which separates the filename from the extension.
+ *  - The file extension must be one of the allowed types: jpg, jpeg, png, gif, or webp.
+ */
+function validateImageString(imageStr) {
+  const errors = [];
+  const allowedTypes = ["jpg", "jpeg", "png", "gif", "webp"];
+
+  if (typeof imageStr !== "string" || !imageStr.trim()) {
+    errors.push("Image string must be a non-empty string.");
+  } else {
+    const parts = imageStr.split(".");
+    if (parts.length !== 2) {
+      errors.push(
+        "Image string must contain exactly one dot separating filename and extension."
+      );
+    } else {
+      const ext = parts.pop().toLowerCase();
+      if (!allowedTypes.includes(ext)) {
+        errors.push(`Image type must be one of: ${allowedTypes.join(", ")}.`);
+      }
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    error: numberErrors(errors),
+  };
+}
+
+//* Validation logic starts here
 
 // Module Scaffolding
 const validator = {};
@@ -334,7 +414,6 @@ validator.department = function (department) {
   }
 
   if (department.length === 0) {
-    tut_123456;
     errors.push("Department array must contain at least one element.");
   }
 
@@ -487,53 +566,7 @@ validator.creatorName = function (name) {
   };
 };
 
-//! --------------------creatorBio
-/**
- * Factory for validating a Bangla text field:
- *  - Must not be empty.
- *  - Must be at least `min` characters and no more than `max` characters.
- *  - Must contain at least one Bengali character (other letters, digits, punctuation allowed).
- */
-//? Generic helper for bangla text validator
-function makeBanglaTextValidator(fieldLabel, { min = 1, max = Infinity } = {}) {
-  const banglaRegex = /^(?=.*[\u0980-\u09FF])[\s\S]+$/;
-
-  return function (text) {
-    const errors = [];
-
-    // 1. non‑empty
-    if (!text || text.trim().length === 0) {
-      errors.push(`${fieldLabel} cannot be empty.`);
-      return { valid: false, error: numberErrors(errors) };
-    }
-
-    const trimmed = text.trim();
-
-    // 2. min length
-    if (trimmed.length < min) {
-      errors.push(`${fieldLabel} must be at least ${min} characters long.`);
-    }
-
-    // 3. max length
-    if (trimmed.length > max) {
-      errors.push(`${fieldLabel} must be no more than ${max} characters long.`);
-    }
-
-    // 4. require at least one Bangla character
-    if (!banglaRegex.test(trimmed)) {
-      errors.push(
-        `${fieldLabel} must include at least one Bengali character (English words are allowed).`
-      );
-    }
-
-    return {
-      valid: errors.length === 0,
-      error: numberErrors(errors),
-    };
-  };
-}
-
-// 2) Min-Max boundary for each field
+// Min-Max boundary for each field
 const bioOpts = { min: 50, max: 2000 };
 const nameOpts = { min: 5, max: 300 };
 const trailerOpts = { min: 25, max: 500 };
@@ -560,39 +593,6 @@ validator.sectionArticle = makeBanglaTextValidator(
   "Section article",
   sectionOpts
 );
-
-//? Generic helper for image check
-/**
- * Validates the article cover string:
- *  - Must be provided as a non-empty string.
- *  - Must contain exactly one dot, which separates the filename from the extension.
- *  - The file extension must be one of the allowed types: jpg, jpeg, png, gif, or webp.
- */
-function validateImageString(imageStr) {
-  const errors = [];
-  const allowedTypes = ["jpg", "jpeg", "png", "gif", "webp"];
-
-  if (typeof imageStr !== "string" || !imageStr.trim()) {
-    errors.push("Image string must be a non-empty string.");
-  } else {
-    const parts = imageStr.split(".");
-    if (parts.length !== 2) {
-      errors.push(
-        "Image string must contain exactly one dot separating filename and extension."
-      );
-    } else {
-      const ext = parts.pop().toLowerCase();
-      if (!allowedTypes.includes(ext)) {
-        errors.push(`Image type must be one of: ${allowedTypes.join(", ")}.`);
-      }
-    }
-  }
-
-  return {
-    valid: errors.length === 0,
-    error: numberErrors(errors),
-  };
-}
 
 //! --------------------creatorImage
 validator.creatorImage = validateImageString;

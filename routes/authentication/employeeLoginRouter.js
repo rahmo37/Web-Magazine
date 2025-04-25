@@ -4,7 +4,8 @@
 const express = require("express");
 const employeeLoginRouter = express.Router();
 const employeeLoginController = require("../../controllers/login/employeeLoginController");
+const verifyReqBody = require("../../middlewares/verifyReqBody");
 
-employeeLoginRouter.post("/", employeeLoginController.login);
- 
+employeeLoginRouter.post("/", verifyReqBody, employeeLoginController.login);
+
 module.exports = { employeeLoginRouter };

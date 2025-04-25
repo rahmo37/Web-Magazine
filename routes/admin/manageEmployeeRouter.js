@@ -8,6 +8,7 @@ const manageEmployeeController = require("../../controllers/admin/manageEmployee
 const authenticateToken = require("../../middlewares/jwtTokenVerify");
 const roleVerify = require("../../middlewares/roleVerification");
 const verifyReqBody = require("../../middlewares/verifyReqBody");
+const temporaryEndpointDisable = require("../../middlewares/temporaryEndpointDisable");
 
 // Request must have JWT token, must come from an employee with admin privilege
 manageEmployeeRouter.use(
@@ -39,6 +40,6 @@ manageEmployeeRouter
     manageEmployeeController.updateAnEmployee
   )
   // Delete an employee
-  .delete(manageEmployeeController.deleteAnEmployee);
+  .delete(temporaryEndpointDisable, manageEmployeeController.deleteAnEmployee);
 
 module.exports = { manageEmployeeRouter };
