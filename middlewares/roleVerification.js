@@ -23,7 +23,7 @@ roleVerify.isRootAdmin = (req, res, next) => {
     err.status = 403;
     return next(err);
   }
-  next();
+  return next();
 };
 
 roleVerify.isEmployee = (req, res, next) => {
@@ -42,7 +42,7 @@ roleVerify.isEmployee = (req, res, next) => {
     err.status = 403;
     return next(err);
   }
-  next();
+  return next();
 };
 
 module.exports = roleVerify;

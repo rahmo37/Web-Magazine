@@ -14,11 +14,12 @@ const FirstDegreeCreatorSchema = new Schema(
     creatorName: { type: String, required: true },
     creatorBio: { type: String, default: "" },
     creatorImage: { type: String, default: "" },
+    uploaderEmployeeID: { type: String, required: true, unique: true },
   },
   { timestamps: true, collection: "firstDegreeCreator" }
 );
 
-// Get an employee by ID
+// Get an FDC by ID
 FirstDegreeCreatorSchema.statics.getFdcByID = async function (ID) {
   return await this.findOne({ fdcID: ID });
 };
@@ -33,10 +34,22 @@ FirstDegreeCreatorSchema.statics.createNewFDC = async function (
   return newFDC;
 };
 
+// Get all the FDCs
+FirstDegreeCreatorSchema.statics.getAllFDCs = function () {
+  return this.find({}).select("-__v -_id -createdAt -updatedAt");
+};
+
 // First Degree Creator validation fields
 FirstDegreeCreatorSchema.statics.getKeys = function () {
   // Excluded fields
-  const exclude = ["fdcID", "_id", "__v", "createdAt", "updatedAt"];
+  const exclude = [
+    "fdcID",
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+    "uploaderEmployeeID",
+  ];
   const allowedKeys = Object.keys(this.schema.paths)
     .map((key) => key.split(".").pop())
     .filter((key) => !exclude.includes(key));

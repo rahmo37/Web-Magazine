@@ -14,6 +14,7 @@ const SecondDegreeCreatorSchema = new Schema(
     creatorName: { type: String, required: true },
     creatorBio: { type: String, default: "" },
     creatorImage: { type: String, default: "" },
+    uploaderEmployeeID: { type: String, required: true, unique: true },
   },
   { timestamps: true, collection: "secondDegreeCreator" }
 );
@@ -36,7 +37,14 @@ SecondDegreeCreatorSchema.statics.createNewSDC = async function (
 // Get the SDC model keys
 SecondDegreeCreatorSchema.statics.getKeys = function () {
   // Excluded fields
-  const exclude = ["sdcID", "_id", "__v", "createdAt", "updatedAt"];
+  const exclude = [
+    "sdcID",
+    "_id",
+    "__v",
+    "createdAt",
+    "updatedAt",
+    "uploaderEmployeeID",
+  ];
   const allowedKeys = Object.keys(this.schema.paths)
     .map((key) => key.split(".").pop())
     .filter((key) => !exclude.includes(key));

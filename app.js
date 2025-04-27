@@ -17,6 +17,8 @@ const requestInfo = require("./middlewares/logRequestInformation");
 const dbConfig = require("./config/db");
 const { dbMaintenance } = require("./helpers/scheduledTasks");
 const { hashPasswordInDatabase } = require("./helpers/hashPassword");
+const authenticateToken = require("./middlewares/jwtTokenVerify");
+const roleVerify = require("./middlewares/roleVerification");
 
 // Security imports
 const helmet = require("helmet");
@@ -36,9 +38,11 @@ const {
   employeeLoginRouter,
 } = require("./routes/authentication/employeeLoginRouter");
 const { manageEmployeeRouter } = require("./routes/admin/manageEmployeeRouter");
+const { manageFdcRouter } = require("./routes/employee/manageFdcRouter");
 const {
   manageGoddoRouter,
 } = require("./routes/employee/content/manageGoddoRouter");
+
 // ---------------------------------Project variables---------------------------------
 const PORT = process.env.PORT || 8000;
 
@@ -87,18 +91,25 @@ app.use(
   employeeLoginRouter
 );
 
-// Employee Manage Route
+//* Only employees are allowed beyond this point and Requests must have JWT token
+app.use(authenticateToken, roleVerify.isEmployee);
+
+// Employee Management Route
 app.use("/api/manage/employee", manageEmployeeRouter);
+
+// Creator Management Route
+app.use("/api/manage/fdc", manageFdcRouter);
 
 // Content Management Route
 app.use("/api/manage/goddo", manageGoddoRouter);
 
 // ---------------------------------Error Handlers---------------------------------
-// Error handling middleware
-app.use(errorHandler);
 
 // Not found error handler, if no routes matches this middleware is called
 app.use(routeNotFoundHandler);
+
+// Error handling middleware
+app.use(errorHandler);
 
 // ---------------------------------Database Connection---------------------------------
 mongoose

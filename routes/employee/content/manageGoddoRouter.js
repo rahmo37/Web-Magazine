@@ -4,8 +4,6 @@
 const express = require("express");
 const manageGoddoRouter = express.Router();
 const manageGoddoController = require("../../../controllers/employee/content/manageGoddoController");
-const authenticateToken = require("../../../middlewares/jwtTokenVerify");
-const roleVerify = require("../../../middlewares/roleVerification");
 const {
   routeAccessVerify,
   modificationAccessVerify,
@@ -15,12 +13,8 @@ const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
 const getRegexForID = require("../../../helpers/getRegexForID");
 
-// Request must have JWT token, must come from an employee
-manageGoddoRouter.use(
-  authenticateToken,
-  roleVerify.isEmployee,
-  routeAccessVerify("goddo")
-);
+// Only Root Admins and the employees in goddo departments are allowed
+manageGoddoRouter.use(routeAccessVerify("goddo"));
 
 //!Delete manageGoddoRouter.use((req, res, next) => {
 //!   console.log("Hi");

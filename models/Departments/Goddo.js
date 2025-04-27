@@ -88,6 +88,7 @@ SubcategorySchema.statics.getKeys = function () {
     "contentAddedDate",
     "articleTrailer",
     "aboutArticle",
+    "originalWritingDate",
     "mainContent",
     "sectionAddedDate",
     "sectionID",

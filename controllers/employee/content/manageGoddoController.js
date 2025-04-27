@@ -1,4 +1,4 @@
-// This file contains all the code for managing goddo
+// This file manages all Goddo Operations
 
 // Imports
 const Link = require("../../../models/Link");
@@ -94,6 +94,7 @@ manageGoddo.getAllGoddo = async function (req, res, next) {
       message:
         "All goddo content attached with employee (If available), fdc, sdc information",
       data: allGoddoAndInfo,
+      totalContentLength: allGoddoAndInfo.length,
     });
   } catch (error) {
     next(error);
@@ -252,7 +253,11 @@ manageGoddo.postAGoddo = async function (req, res, next) {
       // After validation of the structure
       // Generate a new fdcID
       const fdcID = generateID("fdc_");
-      newFdc = { ...passedInFdcInfo, fdcID };
+      newFdc = {
+        ...passedInFdcInfo,
+        fdcID,
+        uploaderEmployeeID: loggedInEmployeeID,
+      };
       newLink.fdcID = fdcID;
     }
 
@@ -295,7 +300,11 @@ manageGoddo.postAGoddo = async function (req, res, next) {
 
         // Generate a new sdcID
         const sdcID = generateID("sdc_");
-        newSdc = { ...passedInSdcInfo, sdcID };
+        newSdc = {
+          ...passedInSdcInfo,
+          sdcID,
+          uploaderEmployeeID: loggedInEmployeeID,
+        };
         newLink.sdcID = sdcID;
       }
     } else {
@@ -324,7 +333,12 @@ manageGoddo.postAGoddo = async function (req, res, next) {
     const passedInContentInfo = flattenObject(body.content);
     const contentKeys = Goddo.getKeys();
     const providedKeys = Object.keys(passedInContentInfo);
-    const optionalKeys = ["articleTrailer", "aboutArticle", "sectionImages"];
+    const optionalKeys = [
+      "articleTrailer",
+      "aboutArticle",
+      "originalWritingDate",
+      "sectionImages",
+    ];
 
     if (!structureChecker(contentKeys, providedKeys, optionalKeys)) {
       return next(
@@ -637,12 +651,12 @@ manageGoddo.deleteAGoddo = async function (req, res, next) {
   }
 };
 
-// Export the module
-module.exports = manageGoddo;
-
 // Helper functions
 function checkAccess(user) {
   return user.employeeType === "ra" || user.employeeType === "da"
     ? true
     : false;
 }
+
+// Export the module
+module.exports = manageGoddo;

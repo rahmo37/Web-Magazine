@@ -5,17 +5,12 @@ const express = require("express");
 const manageEmployeeRouter = express.Router();
 const { validationHandler } = require("../../middlewares/validationHandler");
 const manageEmployeeController = require("../../controllers/admin/manageEmployeeController");
-const authenticateToken = require("../../middlewares/jwtTokenVerify");
 const roleVerify = require("../../middlewares/roleVerification");
 const verifyReqBody = require("../../middlewares/verifyReqBody");
 const temporaryEndpointDisable = require("../../middlewares/temporaryEndpointDisable");
 
-// Request must have JWT token, must come from an employee with admin privilege
-manageEmployeeRouter.use(
-  authenticateToken,
-  roleVerify.isEmployee,
-  roleVerify.isRootAdmin
-);
+// Only Root Admins are allowed
+manageEmployeeRouter.use(roleVerify.isRootAdmin);
 
 // Request to '/' url
 manageEmployeeRouter

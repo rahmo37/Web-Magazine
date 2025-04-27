@@ -4,8 +4,11 @@ const { getErrorObj } = require("../helpers/getErrorObj");
 const getRegexForID = require("../helpers/getRegexForID");
 const Link = require("../models/Link");
 
+// Module Scaffolding
+const deptAccess = {};
+
 // This function checks access permissions for the entire department route.
-function routeAccessVerify(department) {
+deptAccess.routeAccessVerify = function (department) {
   return async function (req, res, next) {
     // Valid Departments
     const validDepartments = process.env.DEPARTMENTS.split(",");
@@ -56,10 +59,10 @@ function routeAccessVerify(department) {
     // If department exists in the employee department list, call next
     next();
   };
-}
+};
 
 // This function checks whether the department an employee is trying to modify actually belongs to them.
-function modificationAccessVerify(key, prefix) {
+deptAccess.modificationAccessVerify = function (key) {
   return async function (req, res, next) {
     // Retrieve the employee
     const loggedEmployee = await Employee.getEmployeeByID(req.user.ID);
@@ -85,7 +88,7 @@ function modificationAccessVerify(key, prefix) {
     if (
       loggedEmployee.employeeType === "ra" ||
       (loggedEmployee.employeeType === "da" &&
-        loggedEmployee.department.some((dep) => /^(goddo|\*)$/i.test(dep)))
+        loggedEmployee.department.some((dept) => /^(goddo|\*)$/i.test(dept)))
     ) {
       return next();
     }
@@ -105,9 +108,9 @@ function modificationAccessVerify(key, prefix) {
     }
     return next();
   };
-}
+};
 
-function explicitDenyVerify(department) {
+deptAccess.explicitDenyVerify = function (department) {
   return async function (req, res, next) {
     // Valid Departments
     const validDepartments = process.env.DEPARTMENTS.split(",");
@@ -153,11 +156,7 @@ function explicitDenyVerify(department) {
     }
     next();
   };
-}
+};
 
 // Export the module
-module.exports = {
-  routeAccessVerify,
-  modificationAccessVerify,
-  explicitDenyVerify,
-};
+module.exports = deptAccess;
