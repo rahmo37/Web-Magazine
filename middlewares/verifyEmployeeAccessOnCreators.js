@@ -22,12 +22,13 @@ creatorAccess.fdcModificationAccessVerify = async function (req, res, next) {
   // Retrieve the fdcID
   const { fdcID } = req.params;
 
+
   // Get the FDC associated the ID
-  const fdc = await FirstDegreeCreator.getFdcByID("fdcID");
+  const fdc = await FirstDegreeCreator.getFdcByID(fdcID);
 
   // If no FDC found
   if (!fdc) {
-    return next(getErrorObj("No FDC found with the provided fdcID", 401));
+    return next(getErrorObj("No FDC found with the provided fdcID", 400));
   }
 
   // If logged in employee is a Root Admin we call next middleware
@@ -93,3 +94,5 @@ creatorAccess.sdcModificationAccessVerify = async function (req, res, next) {
 
   return next();
 };
+
+module.exports = creatorAccess;

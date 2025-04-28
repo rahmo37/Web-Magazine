@@ -571,7 +571,7 @@ const bioOpts = { min: 50, max: 2000 };
 const nameOpts = { min: 5, max: 300 };
 const trailerOpts = { min: 25, max: 500 };
 const aboutOpts = { min: 20, max: 2000 };
-const sectionOpts = { min: 30, max: 2000 };
+const sectionOpts = { min: 30, max: 4000 };
 
 //! --------------------creatorBio
 validator.creatorBio = makeBanglaTextValidator("Creator bio", bioOpts);

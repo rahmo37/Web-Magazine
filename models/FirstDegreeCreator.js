@@ -57,6 +57,21 @@ FirstDegreeCreatorSchema.statics.getKeys = function () {
   return keys;
 };
 
+FirstDegreeCreatorSchema.statics.updateAnFdc = async function (fdcID, fdcData) {
+  // Find the Fdc
+  const fdc = await this.findOne({ fdcID });
+
+  // If no Fdc is found
+  if (!fdc) {
+    throw getErrorObj("No fdc found with the provided fdcID", 400);
+  }
+
+  // Merge the updated data with the existing fdc
+  Object.assign(fdc, fdcData);
+
+  return await fdc.save();
+};
+
 // Delete many FDCs with fdcIDs array
 FirstDegreeCreatorSchema.statics.deleteByIDs = async function (fdcIDsArr) {
   const result = await FirstDegreeCreator.deleteMany({
