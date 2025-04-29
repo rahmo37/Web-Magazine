@@ -152,6 +152,7 @@ manageEmployee.addEmployee = async (req, res, next) => {
     };
 
     // Gathering other necessary information
+    newEmployeeObject.temporaryApproval = false;
     newEmployeeObject.lastLogin = null;
     newEmployeeObject.isActiveAccount = true;
     newEmployeeObject.accountCreated = dateAndTime.getUtcRaw();
@@ -216,9 +217,11 @@ manageEmployee.updateAnEmployee = async (req, res, next) => {
     // Convert employee keys to a Set for faster lookup
     const employeeKeysSet = new Set(Employee.getKeys());
 
-    // Add the isActiveAccount field manually since the getKeys() does not return isActiveAccount key
+    // Add the isActiveAccount and temporaryApproval field manually since the getKeys() does not return isActiveAccount key
     if (ID !== req.user.ID) {
       employeeKeysSet.add("isActiveAccount");
+      employeeKeysSet.add("temporaryApproval");
+
     }
 
     // Find invalid keys

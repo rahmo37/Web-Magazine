@@ -32,6 +32,7 @@ const EmployeeSchema = new Schema(
     isActiveAccount: { type: Boolean, default: true, required: true },
     lastLogin: { type: Date, default: null },
     deniedDepartment: { type: [String], required: true, default: [] },
+    temporaryApproval: { type: Boolean, default: false, required: true },
     employeeBio: {
       firstName: { type: String, required: true },
       lastName: { type: String, required: true },
@@ -49,6 +50,7 @@ EmployeeSchema.statics.getKeys = function () {
     "employeeID",
     "_id",
     "__v",
+    "temporaryApproval",
     "lastLogin",
     "accountCreated",
     "isActiveAccount",

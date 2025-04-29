@@ -1,10 +1,15 @@
 // This file manages all the FDC operations
 // Imports
 const FirstDegreeCreator = require("../../models/FirstDegreeCreator");
+const Link = require("../../models/Link");
 const { sendRequest } = require("../../helpers/sendRequest");
 const { getErrorObj } = require("../../helpers/getErrorObj");
 const structureChecker = require("../../helpers/structureChecker");
 const flattenObject = require("../../helpers/flattenObject");
+const {
+  temporaryAllowanceCheck,
+} = require("../../helpers/temporaryAllowanceCheck");
+const { default: mongoose } = require("mongoose");
 
 // Module Scaffolding
 const manageFdc = {};
@@ -68,6 +73,19 @@ manageFdc.updateAnFdc = async function (req, res, next) {
     // Copy the body
     const body = { ...req.body };
 
+    const fdcLinks = await Link.findByAllIds({ fdcID });
+
+    if (fdcLinks.some((link) => link.employeeID !== req.user.ID)) {
+      const ok = await temporaryAllowanceCheck(req, res);
+      if (!ok) {
+        return next(
+          getErrorObj(
+            "Updating this FDC requires Admin approval, please contact you Administrator!"
+          )
+        );
+      }
+    }
+
     // Check the structure of the information provide
     const passedInFdcInfo = flattenObject(body); // Flattening the passed in FDC data
     const providedKeys = Object.keys(passedInFdcInfo); // From the passed in FDC info
@@ -101,6 +119,45 @@ manageFdc.updateAnFdc = async function (req, res, next) {
     });
   } catch (error) {
     return next(error);
+  }
+};
+
+// Delete an FDC and their content
+manageFdc.deleteAnFdcAndTheirContent = async function (req, res, next) {
+  // Start the session
+  const session = await mongoose.startSession();
+
+  try {
+    let linkDeletion = null;
+    let fdcDeletion = null;
+
+    // Retrieve the ID
+    const { fdcID } = req.params;
+
+    // We perform the operations with transaction
+    await session.withTransaction(async () => {
+      linkDeletion = await Link.deleteManyWithID(`fdcID`, fdcID, session);
+      fdcDeletion = await FirstDegreeCreator.deleteByFdcID(fdcID, session);
+    });
+
+    if (linkDeletion && fdcDeletion) {
+      // Send the request and attach the FDC
+      sendRequest({
+        res,
+        statusCode: 200,
+        message: "Successfully deleted the fdc and their content",
+        data: {
+          linksDeleted: linkDeletion.deletedCount,
+          fdcDeleted: fdcDeletion.deletedCount,
+        },
+      });
+    } else {
+      return next(getErrorObj());
+    }
+  } catch (error) {
+    return next(error);
+  } finally {
+    session.endSession();
   }
 };
 

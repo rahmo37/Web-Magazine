@@ -80,6 +80,30 @@ FirstDegreeCreatorSchema.statics.deleteByIDs = async function (fdcIDsArr) {
   return result.deletedCount;
 };
 
+// Delete one FDC with ID
+FirstDegreeCreatorSchema.statics.deleteByFdcID = async function (
+  fdcID,
+  session = null
+) {
+  // If no fdcID is provided
+  if (!fdcID) {
+    throw new Error("fdcID is required");
+  }
+
+  // Prepare options
+  const opts = session ? { session } : {};
+
+  // Check existence (inside session if provided)
+  const existing = await this.findOne({ fdcID }, null, opts);
+  if (!existing) {
+    throw new Error(`No FirstDegreeCreator found with fdcID provided`);
+  }
+
+  // Delete the document (inside session if provided)
+  const result = await this.deleteOne({ fdcID }, opts);
+  return result;
+};
+
 // Get all the FDC IDs
 FirstDegreeCreatorSchema.statics.getIDs = async function () {
   const result = await this.find({}, { fdcID: 1, _id: 0 });

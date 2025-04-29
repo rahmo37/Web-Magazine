@@ -1,0 +1,8 @@
+Scenario 1
+An employee uploaded a content with new FDC Robindronath thakur, new SDC, and content. Now they want to update the whole FDC to Kazi Nazrul Islam. But by the time he uploaded the new FDC, another employee used the same fdcID or Robindronath Thakur to create a new content. Now the first employee wants to update the FDC to Kazi Nazrul Islam. But the second employee has already used the FDC to create a new content. The first employee would need to request for Admin approval to update the FDC. If the admin approves the request, the employee can update the FDC.
+
+Scenario 2
+An employee might upload a content with wrong fdcID or sdcID. If he needs to update the content. He can update with admin approval. If the admin approves the request, the employee can update the content with new fdcID or sdcID.
+
+Scenario 3
+If deleting and fdc by and admin, delete all of their content
