@@ -8,8 +8,20 @@ const Link = require("../models/Link");
 const deptAccess = {};
 
 // This function checks access permissions for the entire department route.
-deptAccess.routeAccessVerify = function (department) {
+deptAccess.routeAccessVerify = function (
+  passedInDepartment = null,
+  onlyAdmins = false
+) {
   return async function (req, res, next) {
+    let department = null;
+
+    // If department is passed in as a query string
+    if (req.params?.department && !passedInDepartment) {
+      department = req.params.department;
+    } else {
+      department = passedInDepartment;
+    }
+
     // Valid Departments
     const validDepartments = process.env.DEPARTMENTS.split(",");
 
@@ -38,6 +50,16 @@ deptAccess.routeAccessVerify = function (department) {
       );
     }
 
+    // If only admins are allowed to access this department and the employee’s role is "na", then return an error
+    if (onlyAdmins && req.user.employeeType === "na") {
+      return next(
+        getErrorObj(
+          "You do not have sufficient permissions to perform this action",
+          401
+        )
+      );
+    }
+
     // If user is a root admin or a department admin
     if (
       req.user.employeeType === "ra" ||
@@ -62,7 +84,7 @@ deptAccess.routeAccessVerify = function (department) {
 };
 
 // This function checks whether the department an employee is trying to modify actually belongs to them.
-deptAccess.modificationAccessVerify = function (key) {
+deptAccess.modificationAccessVerify = function (key, department) {
   return async function (req, res, next) {
     // Retrieve the employee
     const loggedEmployee = await Employee.getEmployeeByID(req.user.ID);
@@ -88,7 +110,9 @@ deptAccess.modificationAccessVerify = function (key) {
     if (
       loggedEmployee.employeeType === "ra" ||
       (loggedEmployee.employeeType === "da" &&
-        loggedEmployee.department.some((dept) => /^(goddo|\*)$/i.test(dept)))
+        loggedEmployee.department.some((dept) =>
+          new RegExp(`^(${department}|\\*)$`, "i").test(dept)
+        ))
     ) {
       return next();
     }

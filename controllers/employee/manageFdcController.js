@@ -10,6 +10,7 @@ const {
   temporaryAllowanceCheck,
 } = require("../../helpers/temporaryAllowanceCheck");
 const { default: mongoose } = require("mongoose");
+const { generateID } = require("../../helpers/generateID");
 
 // Module Scaffolding
 const manageFdc = {};
@@ -59,6 +60,58 @@ manageFdc.getAnFdc = async function (req, res, next) {
       message: "Requested FDC information attached",
       data: retrievedFdc,
     });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// This function will create an Fdc
+manageFdc.addAnFdc = async function (req, res, next) {
+  try {
+    // Get the logged in user's ID. The Fdc will be added to the database under the logged-in employee
+    const loggedInEmployeeID = req.user.ID;
+
+    // Extract the body
+    const body = { ...req.body };
+
+    // Check the structure of the information provided
+    const passedInFdcInfo = flattenObject(body); // Flattening the passed in FDC data
+    const fdcKeys = FirstDegreeCreator.getKeys(); // Retrieving keys from the FDC model
+    const providedKeys = Object.keys(passedInFdcInfo); // From the passed in FDC info
+    if (!structureChecker(fdcKeys, providedKeys)) {
+      return next(
+        getErrorObj(
+          `FDC information is either missing or contains invalid keys. Please review your submission and try again. The required keys are: ${fdcKeys.join(
+            ", "
+          )}.`,
+          400
+        )
+      );
+    }
+
+    // After validation of the structure
+    // Generate a new fdcID
+    const fdcID = generateID("fdc_");
+    newFdc = {
+      ...passedInFdcInfo,
+      fdcID,
+      uploaderEmployeeID: loggedInEmployeeID,
+    };
+
+    // Now Create the FDC
+    const isCreated = await FirstDegreeCreator.createNewFDC(newFdc);
+
+    // If successfully created send success the request
+    if (isCreated) {
+      sendRequest({
+        res,
+        statusCode: 201,
+        message: "New Fdc created successfully",
+        data: isCreated,
+      });
+    } else {
+      return next(getErrorObj(`Unable to create Fdc at this time`));
+    }
   } catch (error) {
     return next(error);
   }

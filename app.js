@@ -42,6 +42,9 @@ const { manageFdcRouter } = require("./routes/employee/manageFdcRouter");
 const {
   manageGoddoRouter,
 } = require("./routes/employee/content/manageGoddoRouter");
+const {
+  manageContentLinkRouter,
+} = require("./routes/employee/content/manageContentLinkRouter");
 
 // ---------------------------------Project variables---------------------------------
 const PORT = process.env.PORT || 8000;
@@ -101,6 +104,10 @@ app.use("/api/manage/employee", manageEmployeeRouter);
 app.use("/api/manage/fdc", manageFdcRouter);
 
 // Content Management Route
+// Content Links
+app.use("/api/manage/link", manageContentLinkRouter);
+
+// Goddo
 app.use("/api/manage/goddo", manageGoddoRouter);
 
 // ---------------------------------Error Handlers---------------------------------

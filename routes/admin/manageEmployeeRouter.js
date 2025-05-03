@@ -24,6 +24,8 @@ manageEmployeeRouter
     manageEmployeeController.addEmployee
   );
 
+
+// Request to "/:ID"
 manageEmployeeRouter
   .route("/:ID(emp_[A-Za-z0-9]{6})")
   // Get an employee

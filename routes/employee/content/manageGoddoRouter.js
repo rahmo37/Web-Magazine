@@ -13,8 +13,11 @@ const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
 const getRegexForID = require("../../../helpers/getRegexForID");
 
+// Necessary variables
+const department = "goddo";
+
 // Only Root Admins and the employees in goddo departments are allowed
-manageGoddoRouter.use(routeAccessVerify("goddo"));
+manageGoddoRouter.use(routeAccessVerify(department));
 
 //!Delete manageGoddoRouter.use((req, res, next) => {
 //!   console.log("Hi");
@@ -27,7 +30,7 @@ manageGoddoRouter
   // Post a goddo
   .post(
     // See if the employee is explicitly denied to post any content
-    explicitDenyVerify("goddo"),
+    explicitDenyVerify(department),
     // Verify the request body
     verifyReqBody,
     // Validate the posted fields
@@ -46,7 +49,7 @@ manageGoddoRouter
   // Update a goddo section, metadata or article
   .patch(
     // Check if the logged in user has modification permission
-    modificationAccessVerify("godID"), //! Please recheck this middleware may have bugs
+    modificationAccessVerify("godID", department), //! Please recheck this middleware may have bugs
     // Verify if the body is invalid
     verifyReqBody,
     // Validate the request body fields
@@ -60,7 +63,7 @@ manageGoddoRouter
   )
   .delete(
     // Check if the logged in user has modification permission
-    modificationAccessVerify("godID"),
+    modificationAccessVerify("godID", department),
     // Delete a goddo section
     manageGoddoController.deleteAGoddoSection,
     // Delete an entire goddo

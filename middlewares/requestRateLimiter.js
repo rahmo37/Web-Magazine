@@ -26,7 +26,7 @@ requestRateLimiterObj.login = rateLimit({
   legacyHeaders: false,
   handler: (req, res) => {
     res.status(429).json({
-      error: "Too unsuccessful login attempts, please try again later.",
+      error: "Too many unsuccessful login attempts, please try again later.",
     });
   },
 });

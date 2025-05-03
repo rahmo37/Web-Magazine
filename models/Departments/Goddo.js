@@ -194,7 +194,7 @@ SubcategorySchema.statics.updateAGoddoSection = async function (
     throw getErrorObj("No goddo section found with the provided IDs", 400);
   }
 
-  // A variable that will confirm the update
+  // A variable that will confirms the update
   let updated = false;
 
   // Find the subcategory and then update the section

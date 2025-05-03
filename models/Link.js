@@ -134,6 +134,23 @@ LinkSchema.statics.findByAllIds = async function (providedIDs = {}) {
   return await this.find(filter);
 };
 
+LinkSchema.statics.updateALinkWithContentID = async function (
+  contentID,
+  updatedLinkData
+) {
+  // Locate the link(s) using your existing finder
+  const link = await this.getByContentID(contentID);
+  if (!link) {
+    throw new Error("No link matched with the provided ID.");
+  }
+
+  // Update the link
+  Object.assign(link, updatedLinkData);
+
+  // Finally save the link
+  return await link.save();
+};
+
 const Link = mongoose.model("Link", LinkSchema, "link");
 
 module.exports = Link;
