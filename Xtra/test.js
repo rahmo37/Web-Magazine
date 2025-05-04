@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "./.env.development" });
+require("dotenv").config({ path: "../.env.development" });
 const { OpenAI } = require("openai"); //  npm i openai
 const openai = new OpenAI({ apiKey: process.env.OPEN_AI_TRANSLATOR_KEY });
 
