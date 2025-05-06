@@ -20,7 +20,8 @@ manageContentLinkRouter.patch(
   routeAccessVerify(null, true),
   // Verify the body
   verifyReqBody,
-  // validationHandler(), //!How to verify IDs find a solution later
+  // Validate the IDs
+  validationHandler(),
   // Now we update the content link
   manageContentLinkController.updateContentLink
 );

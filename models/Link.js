@@ -3,8 +3,11 @@
  * * Link
  */
 
-// importing packages
+// Importing packages
 const mongoose = require("mongoose");
+const FirstDegreeCreator = require("./FirstDegreeCreator");
+const SecondDegreeCreator = require("./SecondDegreeCreator");
+const Employee = require("./Employee");
 
 // creating schema instance
 const Schema = mongoose.Schema;
@@ -17,6 +20,7 @@ const LinkSchema = new Schema(
     contentID: { type: String, required: true, unique: true },
     fdcID: { type: String, required: true },
     sdcID: { type: String, required: false },
+    contentStatus: { type: String, required: true },
   },
   { timestamps: true, collection: "link" }
 );
@@ -142,6 +146,37 @@ LinkSchema.statics.updateALinkWithContentID = async function (
   const link = await this.getByContentID(contentID);
   if (!link) {
     throw new Error("No link matched with the provided ID.");
+  }
+
+  // Validate every id if they have a corresponding entity
+  // See if provided fdc is valid
+  if (updatedLinkData.fdcID) {
+    const existingFdc = await FirstDegreeCreator.getFdcByID(
+      updatedLinkData.fdcID
+    );
+    if (!existingFdc) {
+      throw new Error("No fdc matched with the provided fdcID.");
+    }
+  }
+
+  // See if provided sdc is valid
+  if (updatedLinkData.sdcID) {
+    const existingFdc = await SecondDegreeCreator.getSdcByID(
+      updatedLinkData.sdcID
+    );
+    if (!existingFdc) {
+      throw new Error("No sdc matched with the provided sdcID.");
+    }
+  }
+
+  // See if provided employeeID is valid
+  if (updatedLinkData.employeeID) {
+    const existingFdc = await Employee.getEmployeeByID(
+      updatedLinkData.employeeID
+    );
+    if (!existingFdc) {
+      throw new Error("No employee matched with the provided employeeID.");
+    }
   }
 
   // Update the link

@@ -3,6 +3,9 @@ const Employee = require("../models/Employee");
 const { getErrorObj } = require("../helpers/getErrorObj");
 const getRegexForID = require("../helpers/getRegexForID");
 const Link = require("../models/Link");
+const {
+  temporaryAllowanceCheck,
+} = require("../helpers/temporaryAllowanceCheck");
 
 // Module Scaffolding
 const deptAccess = {};
@@ -99,10 +102,12 @@ deptAccess.modificationAccessVerify = function (key, department) {
     // Get the contentID
     const contentID = req.params[key];
 
+    console.log(req.params);
+
     // Check if this content has a Link as an Extra step
     const link = await Link.getByContentID(contentID);
     if (!link) {
-      return next(getErrorObj("No Link found for the contentID provided", 401));
+      return next(getErrorObj("No Link found for the contentID provided", 404));
     }
 
     // !delete console.log(loggedEmployee);
@@ -129,6 +134,18 @@ deptAccess.modificationAccessVerify = function (key, department) {
           401
         )
       );
+    }
+
+    // Check for temporary allowance, if the link is not in editing phase
+    if (link.contentStatus !== "editing") {
+      const ok = await temporaryAllowanceCheck(req, res);
+      if (!ok) {
+        return next(
+          getErrorObj(
+            "Any modification in this content requires Admin Approval. Please contact your Administrator"
+          )
+        );
+      }
     }
     return next();
   };

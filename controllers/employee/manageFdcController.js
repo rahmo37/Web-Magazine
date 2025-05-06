@@ -6,9 +6,6 @@ const { sendRequest } = require("../../helpers/sendRequest");
 const { getErrorObj } = require("../../helpers/getErrorObj");
 const structureChecker = require("../../helpers/structureChecker");
 const flattenObject = require("../../helpers/flattenObject");
-const {
-  temporaryAllowanceCheck,
-} = require("../../helpers/temporaryAllowanceCheck");
 const { default: mongoose } = require("mongoose");
 const { generateID } = require("../../helpers/generateID");
 
@@ -44,6 +41,7 @@ manageFdc.getAnFdc = async function (req, res, next) {
   try {
     // Retrieve the fdcID
     const { fdcID } = req.params;
+    console.log(req.params);
 
     // Retrieve the FDC
     const retrievedFdc = await FirstDegreeCreator.getFdcByID(fdcID);
@@ -92,22 +90,22 @@ manageFdc.addAnFdc = async function (req, res, next) {
     // After validation of the structure
     // Generate a new fdcID
     const fdcID = generateID("fdc_");
-    newFdc = {
+    stagedFdc = {
       ...passedInFdcInfo,
       fdcID,
       uploaderEmployeeID: loggedInEmployeeID,
     };
 
     // Now Create the FDC
-    const isCreated = await FirstDegreeCreator.createNewFDC(newFdc);
+    const newFdc = await FirstDegreeCreator.createNewFDC(stagedFdc);
 
     // If successfully created send success the request
-    if (isCreated) {
+    if (newFdc) {
       sendRequest({
         res,
         statusCode: 201,
         message: "New Fdc created successfully",
-        data: isCreated,
+        data: newFdc,
       });
     } else {
       return next(getErrorObj(`Unable to create Fdc at this time`));
@@ -125,19 +123,6 @@ manageFdc.updateAnFdc = async function (req, res, next) {
 
     // Copy the body
     const body = { ...req.body };
-
-    const fdcLinks = await Link.findByAllIds({ fdcID });
-
-    if (fdcLinks.some((link) => link.employeeID !== req.user.ID)) {
-      const ok = await temporaryAllowanceCheck(req, res);
-      if (!ok) {
-        return next(
-          getErrorObj(
-            "Updating this FDC requires Admin approval, please contact you Administrator!"
-          )
-        );
-      }
-    }
 
     // Check the structure of the information provide
     const passedInFdcInfo = flattenObject(body); // Flattening the passed in FDC data
@@ -201,7 +186,6 @@ manageFdc.deleteAnFdcAndTheirContent = async function (req, res, next) {
         message: "Successfully deleted the fdc and their content",
         data: {
           linksDeleted: linkDeletion.deletedCount,
-          fdcDeleted: fdcDeletion.deletedCount,
         },
       });
     } else {

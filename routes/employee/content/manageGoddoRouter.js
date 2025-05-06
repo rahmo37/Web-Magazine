@@ -19,9 +19,9 @@ const department = "goddo";
 // Only Root Admins and the employees in goddo departments are allowed
 manageGoddoRouter.use(routeAccessVerify(department));
 
-//!Delete manageGoddoRouter.use((req, res, next) => {
-//!   console.log("Hi");
-//! });
+// manageGoddoRouter.use((req, res, next) => {
+//   console.log("Hi");
+// });
 
 manageGoddoRouter
   .route("/")
@@ -30,7 +30,7 @@ manageGoddoRouter
   // Post a goddo
   .post(
     // See if the employee is explicitly denied to post any content
-    explicitDenyVerify(department),
+    // explicitDenyVerify(department),
     // Verify the request body
     verifyReqBody,
     // Validate the posted fields
@@ -41,10 +41,10 @@ manageGoddoRouter
 
 manageGoddoRouter
   .route(
-    `/:subID${getRegexForID("god_sub_", 12)}/:godID${getRegexForID(
+    `/:subID(${getRegexForID("god_sub_", 12)})/:godID(${getRegexForID(
       "god_",
       12
-    )}(/:secID${getRegexForID("sec_", 12)})?`
+    )})(/:secID${getRegexForID("sec_", 12)})?`
   )
   // Update a goddo section, metadata or article
   .patch(

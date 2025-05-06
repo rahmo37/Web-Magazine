@@ -3,6 +3,10 @@
 const Employee = require("../models/Employee");
 const FirstDegreeCreator = require("../models/FirstDegreeCreator");
 const SecondDegreeCreator = require("../models/SecondDegreeCreator");
+const Link = require("../models/Link");
+const {
+  temporaryAllowanceCheck,
+} = require("../helpers/temporaryAllowanceCheck");
 const { getErrorObj } = require("../helpers/getErrorObj");
 
 // Module Scaffolding
@@ -21,7 +25,6 @@ creatorAccess.fdcModificationAccessVerify = async function (req, res, next) {
 
   // Retrieve the fdcID
   const { fdcID } = req.params;
-
 
   // Get the FDC associated the ID
   const fdc = await FirstDegreeCreator.getFdcByID(fdcID);
@@ -47,6 +50,21 @@ creatorAccess.fdcModificationAccessVerify = async function (req, res, next) {
         401
       )
     );
+  }
+
+  // If any employee other than the uploader is using the FDC they need approval to perform any modification
+  const fdcLinks = await Link.findByAllIds({ fdcID });
+
+  // Check if at-least one employee is using the fdcID
+  if (fdcLinks.some((link) => link.employeeID !== req.user.ID)) {
+    const ok = await temporaryAllowanceCheck(req, res);
+    if (!ok) {
+      return next(
+        getErrorObj(
+          "Updating this FDC requires Admin approval, please contact you Administrator!"
+        )
+      );
+    }
   }
 
   return next();

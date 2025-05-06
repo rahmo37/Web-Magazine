@@ -2,6 +2,7 @@
 // This module may contain redundant code intentionally, since the validations are checked on the keyname
 // Importing necessary modules
 const { parsePhoneNumberFromString } = require("libphonenumber-js");
+const getRegexForID = require("../helpers/getRegexForID");
 
 //* Helper functions
 function numberErrors(errors) {
@@ -94,6 +95,24 @@ function validateImageString(imageStr) {
   return {
     valid: errors.length === 0,
     error: numberErrors(errors),
+  };
+}
+
+// ? Generic function for checking ID
+function checkID(prefix, length, message) {
+  return function (ID) {
+    const errors = [];
+    const regex = new RegExp(getRegexForID(prefix, length));
+
+    // Validate the English name part
+    if (!regex.test(ID)) {
+      errors.push(message);
+    }
+
+    return {
+      valid: errors.length === 0,
+      error: numberErrors(errors),
+    };
   };
 }
 
@@ -566,12 +585,21 @@ validator.creatorName = function (name) {
   };
 };
 
+//! --------------------fdcID
+validator.fdcID = checkID("fdc_", 12, "Invalid fdcID provided");
+
+//! --------------------sdcID
+validator.sdcID = checkID("sdc_", 12, "Invalid sdcID provided");
+
+//! --------------------employeeID
+validator.employeeID = checkID("emp_", 6, "Invalid employeeID provided");
+
 // Min-Max boundary for each field
 const bioOpts = { min: 50, max: 2000 };
 const nameOpts = { min: 5, max: 300 };
 const trailerOpts = { min: 25, max: 500 };
 const aboutOpts = { min: 20, max: 2000 };
-const sectionOpts = { min: 30, max: 4000 };
+const sectionOpts = { min: 10, max: 4000 };
 
 //! --------------------creatorBio
 validator.creatorBio = makeBanglaTextValidator("Creator bio", bioOpts);
@@ -670,6 +698,33 @@ validator.sectionImages = function (images) {
     valid: errors.length === 0,
     error: numberErrors(errors),
   };
+};
+
+//! --------------------contentStatus
+validator.contentStatus = function (status) {
+  const errors = [];
+
+  // Retrieve the valid statuses
+  const validStatus = process.env.CONTENTSTATUS.split(",");
+
+  // Check the status type and check for falsy value
+  if (!status || typeof status !== "string") {
+    errors.push(
+      `Status must be a non empty string value. (${validStatus.join(", ")})`
+    );
+    return { valid: false, error: numberErrors(errors) };
+  }
+
+  // Check the passed-in status against the validStatus array
+  if (!validStatus.includes(status.toLowerCase())) {
+    errors.push(
+      `Invalid status value provided. Valid values are (${validStatus.join(
+        ", "
+      )})`
+    );
+  }
+
+  return { valid: errors.length === 0, error: numberErrors(errors) };
 };
 
 module.exports = {

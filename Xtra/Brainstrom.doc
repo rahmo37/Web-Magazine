@@ -6,3 +6,6 @@ An employee might upload a content with wrong fdcID or sdcID. If he needs to upd
 
 Scenario 3
 If deleting and fdc by and admin, delete all of their content
+
+To accommodate the drafting phase of a content, a new property should be added to the link. which is contentStatus. The contentStatus can be in three possible values: editing, pending, uploaded. The default value of the contentStatus is editing. 
+Steps how an employee will create a content:

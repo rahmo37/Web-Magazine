@@ -1,4 +1,4 @@
-// checkTempApproval.js
+// This helper file checks if the employee has their temporary allowance variable set to true, also attaches an event listener, to return it back to false after the task is completed
 const Employee = require("../models/Employee");
 
 async function temporaryAllowanceCheck(req, res) {

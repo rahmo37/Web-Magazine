@@ -17,12 +17,18 @@ manageLink.updateContentLink = async function (req, res, next) {
     // Extract the contentID
     const { contentID } = req.params;
 
+    // Locate the link
+    const link = await this.getByContentID(contentID);
+    if (!link) {
+      return next(getErrorObj("No link found with the provided contentID"));
+    }
+
     // Link Data
     const linkData = deepCopy(req.body);
 
     // Check the structure of the request
     const providedKeys = Object.keys(flattenObject(linkData));
-    const optionalFields = ["employeeID", "fdcID", "sdcID"];
+    const optionalFields = ["employeeID", "fdcID", "sdcID", "contentStatus"];
     if (!structureChecker([], providedKeys, optionalFields)) {
       return next(
         getErrorObj(
@@ -32,6 +38,29 @@ manageLink.updateContentLink = async function (req, res, next) {
           400
         )
       );
+    }
+
+    // Retrieve the logged-in user
+    const loggedInEmployee = req.user;
+
+    // Check if the employee has full access
+    const hasFullAccess = checkAccess(loggedInEmployee);
+
+    // Check if the employee is not an admin but has more than one property in the body, and it is set to pending. Additionally they can only set it to pending if the content is in editing phase
+    if (!hasFullAccess) {
+      if (
+        Object.keys(linkData).length !== 1 ||
+        linkData.contentStatus !== "pending" ||
+        link.contentStatus === "ready" ||
+        link.contentStatus === "pending"
+      ) {
+        return next(
+          getErrorObj(
+            `You can only update the contentStatus to "pending". However, you cannot set it to "pending" if it's already in "pending" or "ready" phase.`,
+            400
+          )
+        );
+      }
     }
 
     // Now perform the updated
@@ -50,6 +79,13 @@ manageLink.updateContentLink = async function (req, res, next) {
     return next(error);
   }
 };
+
+// Helper functions
+function checkAccess(user) {
+  return user.employeeType === "ra" || user.employeeType === "da"
+    ? true
+    : false;
+}
 
 // Export the module
 module.exports = manageLink;

@@ -186,6 +186,7 @@ manageGoddo.postAGoddo = async function (req, res, next) {
   const session = await mongoose.startSession();
   try {
     // Gather necessary info from the request
+    const loggedInEmployee = req.user;
     // Get the logged in user's ID. The content will be added to the database under the logged-in employee
     const loggedInEmployeeID = req.user.ID;
 
@@ -316,6 +317,7 @@ manageGoddo.postAGoddo = async function (req, res, next) {
     //? Content
     // Check if the subcategoryID, metadata, article and mainContent is present and valid
     if (
+      !body.content.contentStatus ||
       !body.content.subcategoryID ||
       !body.content.metadata ||
       !body.content.article ||
@@ -323,15 +325,42 @@ manageGoddo.postAGoddo = async function (req, res, next) {
     ) {
       return next(
         getErrorObj(
-          `The content field is either missing or contains invalid structural data. Please ensure that the following fields are included and properly structured: subcategoryID, metadata, article, and mainContent.`,
+          `The content field is either missing or contains invalid structural data. Please ensure that the following fields are included and properly structured: contentStatus, subcategoryID, metadata, article, and mainContent.`,
           400
         )
       );
     }
 
+    // Retrieve the contentStatus
+    const contentStatus = body.content.contentStatus.toLowerCase();
+
+    // Check if employee has full access
+    const hasFullAccess = checkAccess(loggedInEmployee);
+
+    // Check if a contentStatus provided by a regular employee and status is ready
+    if (!hasFullAccess && contentStatus === "ready") {
+      return next(
+        getErrorObj(`Not enough permission to mark the content as 'ready'`, 400)
+      );
+    }
+
+    // Check if a contentStatus provided by an Admin and status is "pending"
+    else if (hasFullAccess && contentStatus === "pending") {
+      return next(
+        getErrorObj(
+          `A content posted by an admin must be in either the 'editing' or 'ready' phase.`,
+          400
+        )
+      );
+    }
+
+    // Add the contentStatus to the new link
+    newLink.contentStatus = contentStatus;
+
     // Now check if the internal properties are provided correctly
     const passedInContentInfo = flattenObject(body.content);
     const contentKeys = Goddo.getKeys();
+    contentKeys.push("contentStatus");
     const providedKeys = Object.keys(passedInContentInfo);
     const optionalKeys = [
       "articleTrailer",
