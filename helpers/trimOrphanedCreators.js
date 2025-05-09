@@ -4,15 +4,19 @@ const structureChecker = require("./structureChecker");
 
 // Module Scaffolding
 const orphanedCreator = {};
+const hemantoFdcID = process.env.HEMANTO_FDCID;
+const hemantoSdcID = process.env.HEMANTO_SDCID;
 
 // This function trims the orphaned creators
 orphanedCreator.trimCreator = async function (entity) {
   try {
+    const hemantoID =
+      entity.modelName === "FirstDegreeCreator" ? hemantoFdcID : hemantoSdcID;
     const entityIDKeyName =
       entity.modelName === "FirstDegreeCreator" ? "fdcID" : "sdcID";
-    const currentEntityIDs = [...new Set(await entity.getIDs())];
+    const currentEntityIDs = [...new Set(await entity.getIDs(hemantoID))];
     const linkEntityIDs = [
-      ...new Set(await Link.getEntityIDs(entityIDKeyName)),
+      ...new Set(await Link.getEntityIDs(entityIDKeyName, hemantoID)),
     ];
 
     if (!structureChecker(linkEntityIDs, currentEntityIDs)) {

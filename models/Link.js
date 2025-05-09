@@ -8,6 +8,11 @@ const mongoose = require("mongoose");
 const FirstDegreeCreator = require("./FirstDegreeCreator");
 const SecondDegreeCreator = require("./SecondDegreeCreator");
 const Employee = require("./Employee");
+const { getErrorObj } = require("../helpers/getErrorObj");
+
+// Necessary variables
+const hemantoFdcID = process.env.HEMANTO_FDCID;
+const hemantoSdcID = process.env.HEMANTO_SDCID;
 
 // creating schema instance
 const Schema = mongoose.Schema;
@@ -57,10 +62,12 @@ LinkSchema.statics.getByContentIDAndEmpID = async function (
   return await Link.findOne({ contentID, employeeID });
 };
 
-LinkSchema.statics.getEntityIDs = async function (entityID) {
+LinkSchema.statics.getEntityIDs = async function (entityID, excludeID) {
   const projection = { [entityID]: 1, _id: 0 };
   const result = await this.find({}, projection);
-  return result.map((doc) => doc[entityID]).filter(Boolean);
+  return result
+    .map((doc) => doc[entityID])
+    .filter((id) => id && id !== excludeID);
 };
 
 LinkSchema.statics.createLink = async function (linkData, session) {
@@ -110,7 +117,7 @@ LinkSchema.statics.deleteManyWithID = async function (
   return this.deleteMany(filter, options);
 };
 
-// Only returns the links that has all the IDs in that link
+// Only returns the links that matches all the IDs passed-in in that link
 LinkSchema.statics.findByAllIds = async function (providedIDs = {}) {
   let IDs = null;
 
@@ -136,6 +143,22 @@ LinkSchema.statics.findByAllIds = async function (providedIDs = {}) {
 
   // Perform the query: only links matching **all** the provided IDs
   return await this.find(filter);
+};
+
+// Updates the fdcIDs to hemantoFdcIds if it's sdcID is null
+LinkSchema.statics.updateFdcIDWhenSdcIsNull = async function (targetFdcID) {
+  // Check that at least one link exists with the given fdcID
+  const exists = await this.exists({ fdcID: targetFdcID });
+  if (!exists) {
+    throw getErrorObj(`No links found with fdcID: ${targetFdcID}`, 400);
+  }
+
+  // Update only those whose sdcID is null
+  const filter = { fdcID: targetFdcID, sdcID: null };
+  const update = { $set: { fdcID: hemantoFdcID } };
+  const result = await this.updateMany(filter, update);
+
+  return result; // contains matchedCount and modifiedCount
 };
 
 LinkSchema.statics.updateALinkWithContentID = async function (

@@ -80,6 +80,36 @@ manageLink.updateContentLink = async function (req, res, next) {
   }
 };
 
+manageLink.updateToHemantoFdc = async function (req, res, next) {
+  try {
+    // Retrieve the fdcID
+    const { fdcID } = req.params;
+
+    // Make the update
+    const updateCount = await Link.updateFdcIDWhenSdcIsNull(fdcID);
+
+    // If modified count is 0
+    if (updateCount.modifiedCount === 0) {
+      return next(
+        getErrorObj(
+          "Update failed: every content item for this FDC has an associated SDC"
+        )
+      );
+    }
+
+    // Send the request
+    sendRequest({
+      res,
+      statusCode: 200,
+      message:
+        "Provided FdcID's corresponding links are updated to HemantoFdcID",
+      data: updateCount.modifiedCount,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 // Helper functions
 function checkAccess(user) {
   return user.employeeType === "ra" || user.employeeType === "da"

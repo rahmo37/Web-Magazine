@@ -2,17 +2,19 @@
 
 // Imports
 const express = require("express");
-const manageContentLinkRouter = express.Router();
-const manageContentLinkController = require("../../../controllers/employee/content/manageContentLinkController");
+const manageLinkRouter = express.Router();
+const manageLinkController = require("../../../controllers/employee/content/manageLinkController");
 const {
   routeAccessVerify,
 } = require("../../../middlewares/verifyEmployeeAccessOnDepartments");
 const validateDepartmentParam = require("../../../middlewares/validateDepartmentParam");
 const verifyReqBody = require("../../../middlewares/verifyReqBody");
 const { validationHandler } = require("../../../middlewares/validationHandler");
+const { isRootAdmin } = require("../../../middlewares/roleVerification");
+const getRegexForID = require("../../../helpers/getRegexForID");
 
 // Update a content link
-manageContentLinkRouter.patch(
+manageLinkRouter.patch(
   "/:department/:contentID",
   // Validate department param
   validateDepartmentParam,
@@ -23,8 +25,17 @@ manageContentLinkRouter.patch(
   // Validate the IDs
   validationHandler(),
   // Now we update the content link
-  manageContentLinkController.updateContentLink
+  manageLinkController.updateContentLink
+);
+
+// Update all given fdc id's link to hemanto's fdc if corresponding link has no sdc
+manageLinkRouter.patch(
+  `/:fdcID${getRegexForID("fdc_", 12)}`,
+  // Only root admin is allowed
+  isRootAdmin,
+  // Update to hemanto fdc
+  manageLinkController.updateToHemantoFdc
 );
 
 // Export the module
-module.exports = { manageContentLinkRouter };
+module.exports = { manageLinkRouter };

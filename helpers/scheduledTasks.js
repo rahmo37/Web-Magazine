@@ -63,14 +63,15 @@ async function allMaintenanceFunctions() {
   }
 }
 
+scheduler.manualMaintenance = async function () {
+  await allMaintenanceFunctions();
+  console.log(
+    "🚀 Initial maintenance completed at",
+    dateAndTime.getLocalFormatted()
+  );
+};
 // Immediately run one maintenance upon server start up
-// (async () => {
-//   await allMaintenanceFunctions();
-//   console.log(
-//     "🚀 Initial maintenance completed at",
-//     dateAndTime.getLocalFormatted()
-//   );
-// })();
+// scheduler.manualMaintenance();
 
 // Gracefully stop cron on exit
 process.on("SIGINT", () => {

@@ -14,7 +14,7 @@ const SecondDegreeCreatorSchema = new Schema(
     creatorName: { type: String, required: true },
     creatorBio: { type: String, default: "" },
     creatorImage: { type: String, default: "" },
-    uploaderEmployeeID: { type: String, required: true, unique: true },
+    uploaderEmployeeID: { type: String, required: true },
   },
   { timestamps: true, collection: "secondDegreeCreator" }
 );
@@ -61,10 +61,13 @@ SecondDegreeCreatorSchema.statics.deleteByIDs = async function (sdcIDsArr) {
 };
 
 // Get all the SDC IDs
-SecondDegreeCreatorSchema.statics.getIDs = async function () {
-  const result = await this.find({}, { sdcID: 1, _id: 0 });
+SecondDegreeCreatorSchema.statics.getIDs = async function (excludeID) {
+  const filter = excludeID ? { sdcID: { $ne: excludeID } } : {};
+  const result = await this.find(filter, { sdcID: 1, _id: 0 });
+  console.log(result.map((doc) => doc.sdcID));
   return result.map((doc) => doc.sdcID);
 };
+
 
 const SecondDegreeCreator = mongoose.model(
   "SecondDegreeCreator",

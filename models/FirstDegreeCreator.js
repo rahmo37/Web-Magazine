@@ -4,8 +4,8 @@
  */
 
 const mongoose = require("mongoose");
-
 const Schema = mongoose.Schema;
+const { getErrorObj } = require("../helpers/getErrorObj");
 
 // First Degree Creator Schema
 const FirstDegreeCreatorSchema = new Schema(
@@ -14,7 +14,7 @@ const FirstDegreeCreatorSchema = new Schema(
     creatorName: { type: String, required: true },
     creatorBio: { type: String, default: "" },
     creatorImage: { type: String, default: "" },
-    uploaderEmployeeID: { type: String, required: true, unique: true },
+    uploaderEmployeeID: { type: String, required: true },
   },
   { timestamps: true, collection: "firstDegreeCreator" }
 );
@@ -96,7 +96,7 @@ FirstDegreeCreatorSchema.statics.deleteByFdcID = async function (
   // Check existence (inside session if provided)
   const existing = await this.findOne({ fdcID }, null, opts);
   if (!existing) {
-    throw new Error(`No FirstDegreeCreator found with fdcID provided`);
+    throw getErrorObj(`No FirstDegreeCreator found with fdcID provided`, 400);
   }
 
   // Delete the document (inside session if provided)
@@ -105,8 +105,10 @@ FirstDegreeCreatorSchema.statics.deleteByFdcID = async function (
 };
 
 // Get all the FDC IDs
-FirstDegreeCreatorSchema.statics.getIDs = async function () {
-  const result = await this.find({}, { fdcID: 1, _id: 0 });
+FirstDegreeCreatorSchema.statics.getIDs = async function (excludeID) {
+  const filter = excludeID ? { fdcID: { $ne: excludeID } } : {};
+  const result = await this.find(filter, { fdcID: 1, _id: 0 });
+  console.log(result.map((doc) => doc.fdcID));
   return result.map((doc) => doc.fdcID);
 };
 

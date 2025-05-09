@@ -8,6 +8,7 @@ const structureChecker = require("../../helpers/structureChecker");
 const flattenObject = require("../../helpers/flattenObject");
 const { default: mongoose } = require("mongoose");
 const { generateID } = require("../../helpers/generateID");
+const { manualMaintenance } = require("../../helpers/scheduledTasks");
 
 // Module Scaffolding
 const manageFdc = {};
@@ -187,6 +188,15 @@ manageFdc.deleteAnFdcAndTheirContent = async function (req, res, next) {
         data: {
           linksDeleted: linkDeletion.deletedCount,
         },
+      });
+
+      // Run maintenance asynchronously after response is sent
+      setImmediate(async () => {
+        try {
+          await manualMaintenance();
+        } catch (error) {
+          console.error("Maintenance task failed:", error);
+        }
       });
     } else {
       return next(getErrorObj());
